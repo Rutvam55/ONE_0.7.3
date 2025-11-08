@@ -31,6 +31,7 @@ Ouvrez votre terminal (ou l'invite de commande) et tapez :
 Une fois dans le dossier `ONE`, lancez l'application en utilisant Python :
 ```bash
 python main.py
+```
 
 ### 🎮 Étape 3 : Premiers Pas dans l'Application
 * **Connexion :** Au premier lancement, l'application vous demandera un nom et un mot de passe.
