@@ -12,4 +12,7 @@
 * **Anglais** (Vocabulaire)
 * **Français** (Vocabulaire)
 * **Deutsch (Allemand)** (Caractéristiques des nouvelles courtes)
-* **Sc. Nat. (Sciences Naturelles)** (Tableau périodique des éléments)
+* **ScNat (Sciences Naturelles)** (Tableau périodique des éléments)
+
+## Auteur
+* Rutvam55
