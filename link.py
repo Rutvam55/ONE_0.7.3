@@ -1,7 +1,7 @@
 import random
 import os
 from itertools import islice
-from  def_sauv import correction
+from  funk import correction
 joueur = None
 def set_joueur(j):
     """Définir la variable globale joueur depuis main.py"""

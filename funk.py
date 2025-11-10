@@ -58,6 +58,9 @@ def charger_sauvegarde():
                                 "Level_Math": joueur.get("Level_Math", 0),
                                 "xp_Math": joueur.get("xp_Math", 0),
                                 "Max_xp_Math": joueur.get("Max_xp_Math", 1000),
+                            },
+                            "Parametre": {
+                                "langue": joueur.get("langue", "Englais")
                             }
                         }
                         donnees["joueurs"][nom] = nouveau
@@ -109,6 +112,9 @@ def ajouter_joueur(donnees, nom, mot_de_passe):
             "Level_Math": 0,
             "xp_Math": 0,
             "Max_xp_Math": 1000
+        },
+        "Parametre": {
+            "langue": "Englais"
         }
     }
     return True

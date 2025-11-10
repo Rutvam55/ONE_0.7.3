@@ -2,10 +2,19 @@ import random
 import os
 from itertools import islice
 from link import set_joueur, Math, Anglais, ScNat, Francais, Deutsch
-from def_sauv import sauvegarder_auto, charger_sauvegarde, ajouter_joueur, Level_up, selectionner_joueur
+from funk import sauvegarder_auto, charger_sauvegarde, ajouter_joueur, Level_up, selectionner_joueur
 
 def calcule_pourcentage(nombre, nombre_total):
     return (nombre / nombre_total) * 100
+
+def langue(joueur):
+    if joueur["Parametre"]["langue"] == "Englich":
+        from En_langue import En
+        La = En
+    if joueur["Parametre"]["langue"] == "Francais":
+        from En_langue import Fr
+        La = Fr
+    return La
 
 # bouton
 boutton_ScNat = False
@@ -34,18 +43,18 @@ while running:
     donnees = charger_sauvegarde()
     while not connection:
         print("=== ONE ===")
-        nom = input("Entrez votre nom : ")
-        mot_de_passe = input("Entrez votre mot de passe : ")
+        nom = input("Enter your name: ")
+        mot_de_passe = input("Enter your password: ")
         joueur = selectionner_joueur(donnees, nom, mot_de_passe)
         if joueur is None:
-            creer = input("Joueur introuvable. Voulez-vous créer un nouveau joueur ? (o/n) ")
+            creer = input("Player not found. Do you want to creat a Player? (y/n) ")
             if creer.lower() == "o":
                 if ajouter_joueur(donnees, nom, mot_de_passe):
-                    print("Joueur créé avec succès.")
+                    print("PLAYER CREATED")
                     joueur = donnees["joueurs"][nom]
                     sauvegarder_auto(donnees)
                 else:
-                    print("Erreur lors de la création du joueur.")
+                    print("ERROR")
                     continue
             else:
                 exit()
@@ -54,10 +63,10 @@ while running:
 
     # configuration des boutons
     choix = None
+    L = langue(joueur)
     while True:
         os.system('cls' if os.name == 'nt' else 'clear')
-        print(f"Bienvenue, {nom} !")
-        print("Tu veux faire quoi ?")
+        print(L["main.69.m"].format(name = nom if nom else 'Invité'))
         print("-" * 40)
         if boutton_ScNat == True:
             print(f"1. ScNat (ON)")
