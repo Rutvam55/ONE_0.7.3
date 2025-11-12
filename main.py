@@ -12,23 +12,11 @@ def calcule_pourcentage(nombre, nombre_total):
 
 
 # bouton
-boutton_ScNat = False
-boutton_ScNat_i_elementen_namen = False
-boutton_ScNat_i_elementen_ordnungszahl = False
-
-boutton_Français = False
-boutton_Français_i_diffi = False
-
-boutton_Deutsch = False
-boutton_Deutsch_i_merkmale_von_Kurzgeschichten = False
-boutton_Deutsch_i_merkmale_von_Kurzgeschichten_alle = True
-
-boutton_Anglais = False
-boutton_Anglais_i_voc_easy = False
-boutton_Anglais_i_voc_impossible = False
-
-boutton_Math = False
-boutton_Math_i_base = False
+boutton_ScNa, boutton_ScNat_i_elementen_namen, boutton_ScNat_i_elementen_ordnungszahl = False
+boutton_Français, boutton_Français_i_diffi = False
+boutton_Deutsch, boutton_Deutsch_i_merkmale_von_Kurzgeschichten, boutton_Deutsch_i_merkmale_von_Kurzgeschichten_alle = True
+boutton_Anglais, boutton_Anglais_i_voc_easy, boutton_Anglais_i_voc_impossible = False
+boutton_Math, boutton_Math_i_base = False
 
 # Menu principal
 menu = []
@@ -58,7 +46,16 @@ while running:
 
     # configuration des boutons
     choix = None
-    L = langue(nom, joueur, v)
+    L = langue(
+        nom,
+        joueur,
+        v,
+        boutton_ScNa, boutton_ScNat_i_elementen_namen, boutton_ScNat_i_elementen_ordnungszahl,
+        boutton_Français, boutton_Français_i_diffi,
+        boutton_Deutsch, boutton_Deutsch_i_merkmale_von_Kurzgeschichten, boutton_Deutsch_i_merkmale_von_Kurzgeschichten_alle,
+        boutton_Anglais, boutton_Anglais_i_voc_easy, boutton_Anglais_i_voc_impossible,
+        boutton_Math, boutton_Math_i_base
+        )
     while True:
         print(L["main.1.p"])
         choix = input(L["main.2.i"])
@@ -66,15 +63,9 @@ while running:
             os.system('cls' if os.name == 'nt' else 'clear')
             print("-" * 40)
             if boutton_ScNat == True:
-                print(f"1. ScNat (ON)")
-                if boutton_ScNat_i_elementen_namen == True:
-                    print("    1.1. Name der elemente (ON)")
-                else:
-                    print("    1.1. Name der elemente (OFF)")
-                if boutton_ScNat_i_elementen_ordnungszahl == True:
-                    print("    1.2. Ordnungszahl der elemente (ON)")
-                else:
-                    print("    1.2. Ordnungszahl der elemente (OFF)")
+                print(L["main.7.p"])
+                print(L["main.8.p"])
+                print("    1.2. Ordnungszahl der elemente (ON)")
             elif boutton_ScNat == False:
                 print(f"1. ScNat (OFF)")
 
