@@ -52,13 +52,11 @@ python main.py
 * Paramètre (0.8.0)
 
 #### v0.7 (LUN 10/11/2025)
-* Correction des erreurs (v0.7.2)
-* plus de vocabulaire en français (v0.7.1)
-* Math (v0.7.0)
+* Correction des erreurs possible (v0.7.2)
+* plus de vocabulaire français (v0.7.1)
+* ajout de la section Math (v0.7.0)
 
-## DE
-### Das Lernwerkzeug
-
-**ONE** ist eine Anwendung, die vollständig in **Python** für das Terminal (Befehlszeile) entwickelt wurde. Es wurde entwickelt, um Benutzern zu helfen, neue Konzepte in verschiedenen Fächern auf interaktive Weise zu wiederholen und zu lernen.
-
-**(Anmerkung des Autors: Der Name "ONE" kommt einfach von weil er nicht wusste was für ein Namen nehmen)**
+#### v0.6 (LUN 03/11/2025)
+* correction des erreur possible (v0.6.2)
+* plus de vocabulaire anglais (v0.6.1)
+* ajout de la section anglais (v0.6.0)
