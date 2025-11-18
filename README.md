@@ -43,30 +43,15 @@ python main.py
 * **Connexion :** Au premier lancement, l'application vous demandera un nom et un mot de passe.
 * Si vous entrez un **nouveau nom**, votre profil (avec toutes les statistiques à zéro) sera automatiquement créé (et sauvegardé dans un fichier local `sauvegarde.json`).
 * Suivez les options du menu pour choisir la matière à réviser !
+* ATTENTION: Il n'y a pas de securiter donc faite attention avec votre fichier **sauvegarde.py**
 
 ### Auteur
 * Rutvam55
 
 ### historique et nouveauté
-#### v0.8 (LUN 17/11/2025)
-* Paramètre (0.8.0)
-
-#### v0.7 (LUN 10/11/2025)
-* Correction des erreurs possible (v0.7.2)
-* plus de vocabulaire français (v0.7.1)
-* ajout de la section Math (v0.7.0)
-
-#### v0.6 (LUN 03/11/2025)
-* correction des erreur possible (v0.6.2)
-* plus de vocabulaire anglais (v0.6.1)
-* ajout de la section anglais (v0.6.0)
-
-### historique et nouveauté
-#### v_0.8.1 (01/12/2025)
-* vocabulaire francais sera plus developper
-
-#### v0.8 (LUN 17/11/2025)
-* Paramètre (0.8.0)
+#### v0.8 (LUN 17/11/2025) - (LUN 01/12/2025)
+* vocabulaire francais sera plus developper (0.8.1) (LUN 01/12/2025)
+* Paramètre (0.8.0) (LUN 17/11/2025)
 
 #### v0.7 (LUN 10/11/2025)
 * Correction des erreurs possible (v0.7.2)
