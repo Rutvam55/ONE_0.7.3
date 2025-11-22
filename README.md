@@ -42,6 +42,7 @@ python main.py
 * **Connexion :** Au premier lancement, l'application vous demandera un nom et un mot de passe.
 * Si vous entrez un **nouveau nom**, votre profil (avec toutes les statistiques à zéro) sera automatiquement créé (et sauvegardé dans un fichier local `sauvegarde.json`).
 * Suivez les options du menu pour choisir la matière à réviser !
+* ATTENTION: Il n'y a pas de securiter donc faite attention avec votre fichier **sauvegarde.py**
 
 ### Auteur
 * Rutvam55
