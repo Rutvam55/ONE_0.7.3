@@ -1,11 +1,10 @@
 import random
 import os
 import pwinput
-
-from itertools import islice
-from CORE.link import IA, set_joueur, Math, Anglais, ScNat, Francais, Deutsch
-from KI.funk import sauvegarder_auto, charger_sauvegarde, ajouter_joueur, Level_up, selectionner_joueur, controller_int, DEFAULT_SAVE_FILE
+from CORE.link import set_joueur, Math, Anglais, ScNat, Francais, Deutsch
+from CORE.funk import sauvegarder_auto, charger_sauvegarde, ajouter_joueur, Level_up, selectionner_joueur, controller_int, DEFAULT_SAVE_FILE
 from CORE.langue import langue
+from KI.ia import IA
 
 v = "0.8.1"
 
@@ -232,7 +231,7 @@ while running:
                 show("Math_5", "5. Math")
                 show("Math_5_1", "  5.1 Base")
 
-                print("\nENTER to valider, ou choisir un bouton.")
+                print("q: Quitter le jeu\n\nENTER to valider, ou choisir un bouton.")
 
                 action = input("> ").strip()
 
@@ -256,11 +255,14 @@ while running:
                     "5": "Math_5",
                     "5.1": "Math_5_1"
                 }
-
                 if action in mapping:
                     boutons.toggle(mapping[action])
                 elif action == "":
                     break
+                elif action.lower() == "q" or action.lower() == "quit":
+                    print("Au revoir !")
+                    running = False
+                    exit()
                 else:
                     print("Choix invalide.")
                     input("ENTER pour continuer...")
@@ -334,27 +336,42 @@ while running:
         if choix == "2":
             os.system("cls" if os.name == "nt" else "clear")
             print("=== INLL (Intelligent Natural Language Learning) ===")
-            choix = input("En quelle langue voulez-vous écrire?\n1. Français\n2. English\n3. Deutsch\n> ").strip()
-            if choix == "1":
-                texte = input("Écrire votre texte en Français:\n> ")
-                new_FR = ia.learn_words(texte, choix)
-                if new_FR:
-                    print("Nouveaux mots appris:")
-                    print("FR:", new_FR)
-            elif choix == "2":
-                texte = input("Write your text in English:\n> ")
-                new_EN = ia.learn_words(texte, choix)
-                if new_EN:
-                    print("Nouveaux mots appris:")
-                    if new_EN:
-                        print("EN:", new_EN)
-            elif choix == "3":
-                texte = input("Schreiben Sie Ihren Text auf Deutsch:\n> ")
-                new_DE = ia.learn_words(texte, choix)
-                if new_DE:
-                    print("Nouveaux mots appris:")
-                    if new_DE:
-                        print("DE:", new_DE)
+            choix_lang = input(
+                "En quelle langue voulez-vous écrire?\n"
+                "1. Français\n"
+                "2. English\n"
+                "3. Deutsch\n> "
+            ).strip()
+            # Dictionnaire de choix propres
+            mapping = {
+                "1": ("FR", "Écrire votre texte en Français:\n> "),
+                "2": ("EN", "Write your text in English:\n> "),
+                "3": ("DE", "Schreiben Sie Ihren Text auf Deutsch:\n> ")
+            }
+            
+            # Vérification du choix
+            if choix_lang not in mapping:
+                print("Choix invalide. Retour au menu.")
+                continue
+            code_langue, message = mapping[choix_lang]
+            print("Bonjour! Vous pouvez commencer à écrire votre texte. Tapez 'q' pour quitter.")
+            while True:
+                # Demander le texte du joueur
+                texte = input(message)
+
+                # Apprentissage IA
+                new = ia.learn_words(texte, code_langue)
+
+                # Affichage
+                if new:
+                    print("Nouveaux mots appris :")
+                    print(f"{code_langue} :", new)
+                elif texte == "":
+                    print("Aucun texte entré.")
+                elif texte == "q":
+                    break
+                answere = ia.answer_generation(texte)
+                print(f"\n---\nRéponse de l'IA: {answere}\n---\n")
         elif choix.lower() == "s" or choix.lower() == "p":
             os.system("cls" if os.name == "nt" else "clear")
             choix = input("Vous voulez faire quoi?\n1. Changer la langue\n> ").strip()

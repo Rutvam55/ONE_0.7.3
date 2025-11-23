@@ -32,65 +32,7 @@ def load_data(wath):
     elif wath == "Math":
         from MATIERE.MATH.math import math_base
         return math_base
-    elif wath == "MEMOIR":
-        with open('DATA/memoir.json', 'r', encoding='utf-8') as f:
-            memoir_data = json.load(f)
-            vocab_FR = memoir_data["vocab_FR"]
-            vocab_EN = memoir_data["vocab_EN"]
-            vocab_DE = memoir_data["vocab_DE"]
-        return vocab_FR, vocab_EN, vocab_DE
-
-class IA:
-    def __init__(self):
-        self.vocab_FR, self.vocab_EN, self.vocab_DE = load_data("MEMOIR")
-
-    def load_memory():
-        try:
-            with open('DATA/memoir.json', 'r', encoding='utf-8') as f:
-                memoir_data = json.load(f)
-                vocab_FR = memoir_data["vocab_FR"]
-                vocab_EN = memoir_data["vocab_EN"]
-                vocab_DE = memoir_data["vocab_DE"]
-            return vocab_FR, vocab_EN, vocab_DE
-        except:
-            return [], [], []
-    def save_memory(self):
-        memoir_data = {
-            "vocab_FR": self.vocab_FR,
-            "vocab_EN": self.vocab_EN,
-            "vocab_DE": self.vocab_DE
-        }
-        with open('DATA/memoir.json', 'w', encoding='utf-8') as f:
-            json.dump(memoir_data, f, ensure_ascii=False, indent=4)
-    def learn_words(self, sentence, language):
-        words = sentence.lower().replace('.', '').replace(',', '').replace("'", "").split()
-        if language == "FR":
-            new_words_FR = []
-            for w in words:
-                if w not in self.vocab_FR:
-                    self.vocab_FR.append(w)
-                    new_words_FR.append(w)
-            if new_words_FR:
-                self.save_memory()
-            return new_words_FR
-        elif language == "EN":
-            new_words_EN = []
-            for w in words:
-                if w not in self.vocab_EN:
-                    self.vocab_EN.append(w)
-                    new_words_EN.append(w)
-            if new_words_EN:
-                self.save_memory()
-            return new_words_EN
-        elif language == "DE":
-            new_words_DE = []
-            for w in words:
-                if w not in self.vocab_DE:
-                    self.vocab_DE.append(w)
-                    new_words_DE.append(w)
-            if new_words_DE:
-                self.save_memory()
-            return new_words_DE
+    
 
 def verbe_type(verb_typ, personne, francais_verbs_data):
     sujet = random.choice(personne)
@@ -289,18 +231,11 @@ def ScNat(i, ndq, L):
 # Anglais
 def Anglais(i, ndq, L):
     Anglais_voc1 = load_data("EN")
-    Anglais_voc = [Anglais_voc1]
-    # Dans la fonction Anglais(i) :
-    niveau = joueur.get("Anglais", {}).get("Level_Anglais", 0)
-
-    # Utilise seulement les N dictionnaires de vocabulaire jusqu'au niveau actuel
-    # Par exemple : Level 0 -> 1 dictionnaire; Level 1 -> 2 dictionnaires
-    # Le niveau est limité au nombre de dictionnaires disponibles
-    Anglais_voc_filtered = Anglais_voc[:min(niveau + 1, len(Anglais_voc))]
-
+    niveau = joueur["Anglais"]["Level_Anglais"]
+    Anglais_voc_filtered = limiter_elements(Anglais_voc1, niveau)
     if not Anglais_voc_filtered:
-        # Cas d'erreur si le niveau est trop haut ou pas de voc
-        Anglais_voc_filtered = [Anglais_voc1]
+        print("Aucun vocabulaire disponible pour ce niveau.")
+        return 0, 0, False
 
     print(f"{ndq}) Anglais\nXP Anglais: {joueur['Anglais']['xp_Anglais']}; Level Anglais: {joueur['Anglais']['Level_Anglais']}; Exercise Anglais: {joueur['Anglais']['parties_jouees_Anglais']}")
     print("-" * 40)
