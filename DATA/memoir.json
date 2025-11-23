@@ -1,0 +1,50 @@
+{
+    "vocab_FR": [
+        "Bonjour",
+        "un",
+        "jour",
+        "tom",
+        "a",
+        "eu",
+        "accident",
+        "avec",
+        "une",
+        "moto",
+        "salut",
+        "je",
+        "mappelle",
+        "younes"
+    ],
+    "vocab_EN": [
+        "Hello",
+        "a",
+        "day",
+        "tom",
+        "had",
+        "accident",
+        "with",
+        "a",
+        "motorcycle",
+        "hi",
+        "i",
+        "am",
+        "called",
+        "younes"
+    ],
+    "vocab_DE": [
+        "Hallo",
+        "ein",
+        "Tag",
+        "tom",
+        "hatte",
+        "Unfall",
+        "mit",
+        "einer",
+        "Motorrad",
+        "hi",
+        "ich",
+        "bin",
+        "genannt",
+        "younes"
+    ]
+}

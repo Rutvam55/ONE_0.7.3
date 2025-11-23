@@ -5,7 +5,7 @@ def langue(nom, joueur, v, boutton_state):
 
     FR = {
         "main.1.p": "Bienvenue, {name} !\nTu veux faire quoi?",
-        "main.2.i": "1. Entrainemant\nP. Parametre",
+        "main.2.i": "1. Entrainemant\n2. INL\nP. Parametre\n> ",
         "main.3.i": "__PARAMETRE__\n1. Langue: {langue}\n2. v: {v}",
         "main.4.p": "Appuie sur Entrée pour lancer le quiz avec les modes sélectionnés.",
         "main.5.i": "Entrer votre réponse (tape 1-5 pour basculer): ",

@@ -1,0 +1,65 @@
+{
+    "verbs": {
+        "accord": ["", "s", "e", "es"],
+        "personnes": [
+            "je",
+            "tu",
+            "il",
+            "elle",
+            "nous",
+            "vous",
+            "ils",
+            "elles"
+        ],
+        "avoir": {
+            "présent": {
+                "je": "ai",
+                "tu": "as",
+                "il": "a",
+                "elle": "a",
+                "nous": "avons",
+                "vous": "avez",
+                "ils": "ont",
+                "elles": "ont"
+            },
+            "participe passé": "eu",
+            "imparfait": {
+                "je": "avais",
+                "tu": "avais",
+                "il": "avait",
+                "elle": "avait",
+                "nous": "avions",
+                "vous": "aviez",
+                "ils": "avaient",
+                "elles": "avaient"
+            }
+        },
+        "etre": {
+            "présent": {
+                "je": "suis",
+                "tu": "es",
+                "il": "est",
+                "elle": "est",
+                "nous": "sommes",
+                "vous": "êtes",
+                "ils": "sont",
+                "elles": "sont"
+            },
+            "participe passé": "été",
+            "imparfait": {
+                "je": "étais",
+                "tu": "étais",
+                "il": "était",
+                "elle": "était",
+                "nous": "étions",
+                "vous": "étiez",
+                "ils": "étaient",
+                "elles": "étaient"
+            }
+        },
+        "list": [
+            "avoir",
+            "etre"
+        ]
+    }
+}   

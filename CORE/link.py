@@ -1,6 +1,112 @@
 import random
 import os
 from itertools import islice
+import json
+
+def load_data(wath):
+    if wath == "EN":
+        with open('MATIERE/ANGLAIS/anglais_voc1.json', 'r', encoding='utf-8') as f:
+            anglais_voc1_data = json.load(f)
+            anglais_voc1 = anglais_voc1_data["anglais_voc1"]
+        return anglais_voc1
+    elif wath == "FR":
+        with open('MATIERE/FRANCAIS/francais.json', 'r', encoding='utf-8') as f:
+            francais_data = json.load(f)
+            francais_voc = francais_data["francais_voc"]
+        with open('MATIERE/FRANCAIS/francais_verb.json', 'r', encoding='utf-8') as f:
+            francais_verbs_data = json.load(f)
+            accord = francais_verbs_data["verbs"]["accord"]
+            personne = francais_verbs_data["verbs"]["personnes"]
+        return francais_voc, personne, accord, francais_verbs_data
+    elif wath == "DE":
+        with open('MATIERE/DEUTSCH/deutsch.json', 'r', encoding='utf-8') as f:
+            deutsch_data = json.load(f)
+            merkmale_von_Kurzgeschichten = deutsch_data["merkmale_von_Kurzgeschichten"]
+        return merkmale_von_Kurzgeschichten
+    elif wath == "ScNat":
+        with open('MATIERE/SCNAT/scnat.json', 'r', encoding='utf-8') as f:
+            ScNat_data = json.load(f)
+            ScNat_elements = ScNat_data["elements"]
+            ScNat_ordnungszahl_von_elementen = ScNat_data["ordnungszahl_von_elementen"]
+        return ScNat_elements, ScNat_ordnungszahl_von_elementen
+    elif wath == "Math":
+        from MATIERE.MATH.math import math_base
+        return math_base
+    elif wath == "MEMOIR":
+        with open('DATA/memoir.json', 'r', encoding='utf-8') as f:
+            memoir_data = json.load(f)
+            vocab_FR = memoir_data["vocab_FR"]
+            vocab_EN = memoir_data["vocab_EN"]
+            vocab_DE = memoir_data["vocab_DE"]
+        return vocab_FR, vocab_EN, vocab_DE
+
+class IA:
+    def __init__(self):
+        self.vocab_FR, self.vocab_EN, self.vocab_DE = load_data("MEMOIR")
+
+    def load_memory():
+        try:
+            with open('DATA/memoir.json', 'r', encoding='utf-8') as f:
+                memoir_data = json.load(f)
+                vocab_FR = memoir_data["vocab_FR"]
+                vocab_EN = memoir_data["vocab_EN"]
+                vocab_DE = memoir_data["vocab_DE"]
+            return vocab_FR, vocab_EN, vocab_DE
+        except:
+            return [], [], []
+    def save_memory(self):
+        memoir_data = {
+            "vocab_FR": self.vocab_FR,
+            "vocab_EN": self.vocab_EN,
+            "vocab_DE": self.vocab_DE
+        }
+        with open('DATA/memoir.json', 'w', encoding='utf-8') as f:
+            json.dump(memoir_data, f, ensure_ascii=False, indent=4)
+    def learn_words(self, sentence, language):
+        words = sentence.lower().replace('.', '').replace(',', '').replace("'", "").split()
+        if language == "FR":
+            new_words_FR = []
+            for w in words:
+                if w not in self.vocab_FR:
+                    self.vocab_FR.append(w)
+                    new_words_FR.append(w)
+            if new_words_FR:
+                self.save_memory()
+            return new_words_FR
+        elif language == "EN":
+            new_words_EN = []
+            for w in words:
+                if w not in self.vocab_EN:
+                    self.vocab_EN.append(w)
+                    new_words_EN.append(w)
+            if new_words_EN:
+                self.save_memory()
+            return new_words_EN
+        elif language == "DE":
+            new_words_DE = []
+            for w in words:
+                if w not in self.vocab_DE:
+                    self.vocab_DE.append(w)
+                    new_words_DE.append(w)
+            if new_words_DE:
+                self.save_memory()
+            return new_words_DE
+
+def verbe_type(verb_typ, personne, francais_verbs_data):
+    sujet = random.choice(personne)
+    temps = random.choice(["présent", "passé composé", "imparfait", "plus-que-parfait"])    
+    reponse = input(f"Conjugaison du verbe '{verb_typ}' au {temps}:\n> {sujet} ")
+    if temps == "présent":
+        reponse_correct = francais_verbs_data[verb_typ][temps][sujet]
+    elif temps == "passé composé":
+        temps == "participe passé"
+        reponse_correct = francais_verbs_data[verb_typ]["present"][sujet] + " " + francais_verbs_data[verb_typ][temps]
+    elif temps == "imparfait":
+        reponse_correct = francais_verbs_data[verb_typ][temps][sujet]
+    elif temps == "plus-que-parfait":
+        reponse_correct = francais_verbs_data[verb_typ]["imparfait"][sujet] + " " + francais_verbs_data[verb_typ]["participe passé"]
+    return reponse, reponse_correct
+
 joueur = None
 def set_joueur(j):
     """Définir la variable globale joueur depuis main.py"""
@@ -46,9 +152,9 @@ def control(score, xp, streak, reponse, reponse_correct, max):
 
 
 # Math
-from MATIERE.MATH.math import math_base
 def Math(i, ndq, L):
-    print(f"{ndq}) Math\nXP Math: {joueur["Math"]["xp_Math"]}; Level Math: {joueur["Math"]["Level_Math"]}; Exercise Math: {joueur["Math"]["parties_jouees_Math"]}")
+    math_base = load_data("Math")
+    print(f"{ndq}) Math\nXP Math: {joueur['Math']['xp_Math']}; Level Math: {joueur['Math']['Level_Math']}; Exercise Math: {joueur['Math']['parties_jouees_Math']}")
     print("-" * 40)
     score = 0
     xp = 0
@@ -59,35 +165,37 @@ def Math(i, ndq, L):
         reponse = input(question)
         score, xp, streak = control(score, xp, streak, reponse, reponse_correct, 5)
     return score, xp, streak
-    return score, xp, streak
 
 
 # Francais
-from MATIERE.LANGUE.francais import francais_voc
 def Francais(i, ndq, L):
+    francais_voc, personne, accord, francais_verbs_data = load_data("FR")
     choix = random.choice(i)
-    print(f"{ndq}) Francais\nXP Francais: {joueur["Francais"]["xp_Francais"]}; Level Francais: {joueur["Francais"]["Level_Francais"]}; Exercise Francais: {joueur["Francais"]["parties_jouees_Francais"]}")
+    print(f"{ndq}) Francais\nXP Francais: {joueur['Francais']['xp_Francais']}; Level Francais: {joueur['Francais']['Level_Francais']}; Exercise Francais: {joueur['Francais']['parties_jouees_Francais']}")
     print("-" * 40)
     score = 0
     xp = 0
     streak = False
     if choix == "voc dif":
         question = random.choice(list(francais_voc.items()))
-        mot, traduction = question
+        traduction, mot = question
         reponse = input(f"Comment dit-on '{mot}' en Francais?\nEntrer votre réponse: ").strip().capitalize()
+    elif choix == "verb":
+        verbe_typ = random.choice(francais_verbs_data["verbs"]["list"])
+        reponse, traduction = verbe_type(verbe_typ, personne, francais_verbs_data)
     score, xp, streak = control(score, xp, streak, reponse, traduction, 5)
     return score, xp, streak
 
 
 # Deutsch
-from MATIERE.LANGUE.deutsch import merkmale_von_Kurzgeschichten
 def Deutsch(i, ndq, L):
+    merkmale_von_Kurzgeschichten = load_data("DE")
     score = 0
     xp = 0
     streak = False
     choix = random.choice(i)
     if choix == "Merkmale von Kurzgeschichten (Einfach)":
-        print(f"{ndq}) Deutsch\nXP Deutsch: {joueur["Deutsch"]["xp_Deutsch"]}; Level Deutsch: {joueur["Deutsch"]["Level_Deutsch"]}; Exercise Deutsch: {joueur["Deutsch"]["parties_jouees_Deutsch"]}")
+        print(f"{ndq}) Deutsch\nXP Deutsch: {joueur['Deutsch']['xp_Deutsch']}; Level Deutsch: {joueur['Deutsch']['Level_Deutsch']}; Exercise Deutsch: {joueur['Deutsch']['parties_jouees_Deutsch']}")
         print("-" * 40)
         reponse = input("Schreib einen von denen 10 merkmalen von Kurzgeschichten\n> ")
         if reponse in merkmale_von_Kurzgeschichten:
@@ -105,7 +213,7 @@ def Deutsch(i, ndq, L):
         reponse_finale = []
         while True:
             os.system('cls' if os.name == 'nt' else 'clear')
-            print(f"{ndq}) Deutsch\nXP Deutsch: {joueur["Deutsch"]["xp_Deutsch"]}; Level Deutsch: {joueur["Deutsch"]["Level_Deutsch"]}; Exercise Deutsch: {joueur["Deutsch"]["parties_jouees_Deutsch"]}")
+            print(f"{ndq}) Deutsch\nXP Deutsch: {joueur['Deutsch']['xp_Deutsch']}; Level Deutsch: {joueur['Deutsch']['Level_Deutsch']}; Exercise Deutsch: {joueur['Deutsch']['parties_jouees_Deutsch']}")
             print("-" * 40)
             if set(reponse_finale) == set(merkmale_von_Kurzgeschichten):
                 print("Félicitations, tu as trouvé tous les merkmale von Kurzgeschichten !")
@@ -126,19 +234,18 @@ def Deutsch(i, ndq, L):
 
 
 # ScNat
-from MATIERE.SCNAT.scnat import elements
-from MATIERE.SCNAT.scnat import ordnungszahl_von_elementen
 def limiter_elements(elements_dict, niveau):
     """Retourne un dictionnaire limité en fonction du niveau."""
     limites = [5, 10, 15, 20, 25, 30, 35]
     max_elements = limites[min(niveau, len(limites) - 1)]
     return dict(islice(elements_dict.items(), max_elements))
 def ScNat(i, ndq, L):
+    elements, ordnungszahl_von_elementen = load_data("ScNat")
     score = 0
     xp = 0
     streak = False
     choix = random.choice(i)
-    print(f"{ndq}) ScNat\nXP ScNat: {joueur["ScNat"]["xp_ScNat"]}; Level ScNat: {joueur["ScNat"]["Level_ScNat"]}; Exercise ScNat: {joueur["ScNat"]["parties_jouees_ScNat"]}")
+    print(f"{ndq}) ScNat\nXP ScNat: {joueur['ScNat']['xp_ScNat']}; Level ScNat: {joueur['ScNat']['Level_ScNat']}; Exercise ScNat: {joueur['ScNat']['parties_jouees_ScNat']}")
     print("-" * 40)
     if choix == "element":
         element_subset = limiter_elements(elements, joueur["ScNat"]["Level_ScNat"])
@@ -180,22 +287,9 @@ def ScNat(i, ndq, L):
 
 
 # Anglais
-from MATIERE.LANGUE.anglais import Anglais_voc1_famille, Anglais_voc2_school, Anglais_voc3_loisire, Anglais_voc4_natur, Anglais_voc5_nourriture, Anglais_voc6_vetement, Anglais_voc7_technologie, Anglais_voc8_lieux, Anglais_voc9_corps_sante_menage, Anglais_voc10_vie_metiers_voyages, Anglais_voc11
 def Anglais(i, ndq, L):
-    Anglais_voc = [
-        Anglais_voc1_famille,
-        Anglais_voc2_school,
-        Anglais_voc3_loisire,
-        Anglais_voc4_natur,
-        Anglais_voc5_nourriture,
-        Anglais_voc6_vetement,
-        Anglais_voc7_technologie,
-        Anglais_voc8_lieux,
-        Anglais_voc9_corps_sante_menage,
-        Anglais_voc10_vie_metiers_voyages,
-        Anglais_voc11
-        ]
-
+    Anglais_voc1 = load_data("EN")
+    Anglais_voc = [Anglais_voc1]
     # Dans la fonction Anglais(i) :
     niveau = joueur.get("Anglais", {}).get("Level_Anglais", 0)
 
@@ -206,9 +300,9 @@ def Anglais(i, ndq, L):
 
     if not Anglais_voc_filtered:
         # Cas d'erreur si le niveau est trop haut ou pas de voc
-        Anglais_voc_filtered = [Anglais_voc1_famille]
+        Anglais_voc_filtered = [Anglais_voc1]
 
-    print(f"{ndq}) Anglais\nXP Anglais: {joueur["Anglais"]["xp_Anglais"]}; Level Anglais: {joueur["Anglais"]["Level_Anglais"]}; Exercise Anglais: {joueur["Anglais"]["parties_jouees_Anglais"]}")
+    print(f"{ndq}) Anglais\nXP Anglais: {joueur['Anglais']['xp_Anglais']}; Level Anglais: {joueur['Anglais']['Level_Anglais']}; Exercise Anglais: {joueur['Anglais']['parties_jouees_Anglais']}")
     print("-" * 40)
     score = 0
     xp = 0

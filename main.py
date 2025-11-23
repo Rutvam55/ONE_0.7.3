@@ -3,11 +3,13 @@ import os
 import pwinput
 
 from itertools import islice
-from CORE.link import set_joueur, Math, Anglais, ScNat, Francais, Deutsch
+from CORE.link import IA, set_joueur, Math, Anglais, ScNat, Francais, Deutsch
 from KI.funk import sauvegarder_auto, charger_sauvegarde, ajouter_joueur, Level_up, selectionner_joueur, controller_int, DEFAULT_SAVE_FILE
 from CORE.langue import langue
 
 v = "0.8.1"
+
+ia = IA()
 
 def calcule_pourcentage(nombre, nombre_total):
     return (nombre / nombre_total) * 100 if nombre_total > 0 else 0
@@ -25,6 +27,7 @@ class Boutton:
 
             "Français_2": False,
             "Français_2_1": False,
+            "Français_2_2": False,
 
             "Deutsch_3": False,
             "Deutsch_3_1": False,
@@ -64,6 +67,8 @@ class Boutton:
             menu.append("Francais")
             if self.state["Français_2_1"]:
                 i_Francais.append("voc dif")
+            if self.state["Français_2_2"]:
+                i_Francais.append("verb")
 
         # ---------------- DEUTSCH ----------------
         if self.state["Deutsch_3"]:
@@ -214,6 +219,7 @@ while running:
 
                 show("Français_2", "2. Français")
                 show("Français_2_1", "  2.1 Voc. difficile")
+                show("Français_2_2", "  2.2 Verbes")
 
                 show("Deutsch_3", "3. Deutsch")
                 show("Deutsch_3_1", "  3.1 Kurzgeschichten (einfach)")
@@ -237,6 +243,7 @@ while running:
 
                     "2": "Français_2",
                     "2.1": "Français_2_1",
+                    "2.2": "Français_2_2",
 
                     "3": "Deutsch_3",
                     "3.1": "Deutsch_3_1",
@@ -268,28 +275,36 @@ while running:
                 continue
             else:
                 choix_mode = input("Choisir le mode\n1: Infini\n2: Normal\n> ").strip().lower()
+                
+                # =====================================
+                #               Infini
+                # =====================================
                 if choix_mode in ["1", "infini"]:
                     os.system('cls' if os.name == 'nt' else 'clear')
                     Streak = True
                     ndq = 0
-                    while Streak:
+                    while Streak == True:
                         ndq += 1
                         jeu_choisi = random.choice(menu)
                         if jeu_choisi == "ScNat":
-                            ScNat(i_ScNat, ndq, L)
+                            score, xp, Streak = ScNat(i_ScNat, ndq, L)
                         elif jeu_choisi == "Francais":
-                            Francais(i_Francais, ndq, L)
+                            score, xp, Streak = Francais(i_Francais, ndq, L)
                         elif jeu_choisi == "Deutsch":
-                            Deutsch(i_Deutsch, ndq, L)
+                            score, xp, Streak = Deutsch(i_Deutsch, ndq, L)
                         elif jeu_choisi == "Anglais":
-                            Anglais(i_Anglais, ndq, L)
+                            score, xp, Streak = Anglais(i_Anglais, ndq, L)
                         elif jeu_choisi == "Math":
-                            Math(i_Math, ndq, L)
+                            score, xp, Streak = Math(i_Math, ndq, L)
                         else:
                             print("Erreur de sélection du jeu.")
                             Streak = False
                         Level_up(joueur)
                         sauvegarder_auto(donnees)
+
+                # =====================================
+                #               Normal
+                # =====================================
                 elif choix_mode in ["2", "normal"]:
                     os.system('cls' if os.name == 'nt' else 'clear')
                     Streak = True
@@ -316,6 +331,30 @@ while running:
                             Streak = False
                         Level_up(joueur)
                         sauvegarder_auto(donnees, DEFAULT_SAVE_FILE)
+        if choix == "2":
+            os.system("cls" if os.name == "nt" else "clear")
+            print("=== INLL (Intelligent Natural Language Learning) ===")
+            choix = input("En quelle langue voulez-vous écrire?\n1. Français\n2. English\n3. Deutsch\n> ").strip()
+            if choix == "1":
+                texte = input("Écrire votre texte en Français:\n> ")
+                new_FR = ia.learn_words(texte, choix)
+                if new_FR:
+                    print("Nouveaux mots appris:")
+                    print("FR:", new_FR)
+            elif choix == "2":
+                texte = input("Write your text in English:\n> ")
+                new_EN = ia.learn_words(texte, choix)
+                if new_EN:
+                    print("Nouveaux mots appris:")
+                    if new_EN:
+                        print("EN:", new_EN)
+            elif choix == "3":
+                texte = input("Schreiben Sie Ihren Text auf Deutsch:\n> ")
+                new_DE = ia.learn_words(texte, choix)
+                if new_DE:
+                    print("Nouveaux mots appris:")
+                    if new_DE:
+                        print("DE:", new_DE)
         elif choix.lower() == "s" or choix.lower() == "p":
             os.system("cls" if os.name == "nt" else "clear")
             choix = input("Vous voulez faire quoi?\n1. Changer la langue\n> ").strip()
