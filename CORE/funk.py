@@ -1,5 +1,66 @@
+#pip install pycryptodome
+from Crypto.Cipher import AES
+from Crypto.Random import get_random_bytes
+import base64
 import json
 import os
+
+def chiffrer_fichier_json(chemin_entree: str, chemin_sortie: str, cle: bytes):
+    """Chiffre un fichier JSON et sauvegarde le résultat en base64."""
+    if not os.path.isfile(chemin_entree):
+        raise FileNotFoundError(f"Fichier introuvable : {chemin_entree}")
+
+    with open(chemin_entree, "r", encoding="utf-8") as f:
+        contenu = f.read()
+
+    cipher = AES.new(cle, AES.MODE_GCM)
+    ciphertext, tag = cipher.encrypt_and_digest(contenu.encode("utf-8"))
+
+    # On stocke nonce, tag et ciphertext dans un JSON
+    data_chiffree = {
+        "nonce": base64.b64encode(cipher.nonce).decode("utf-8"),
+        "tag": base64.b64encode(tag).decode("utf-8"),
+        "ciphertext": base64.b64encode(ciphertext).decode("utf-8")
+    }
+
+    with open(chemin_sortie, "w", encoding="utf-8") as f:
+        json.dump(data_chiffree, f, indent=4)
+
+    print(f"✅ Fichier chiffré enregistré dans {chemin_sortie}")
+
+def dechiffrer_fichier_json(chemin_entree: str, chemin_sortie: str, cle: bytes):
+    """Déchiffre un fichier JSON chiffré et sauvegarde le contenu original."""
+    if not os.path.isfile(chemin_entree):
+        raise FileNotFoundError(f"Fichier introuvable : {chemin_entree}")
+
+    with open(chemin_entree, "r", encoding="utf-8") as f:
+        data_chiffree = json.load(f)
+
+    nonce = base64.b64decode(data_chiffree["nonce"])
+    tag = base64.b64decode(data_chiffree["tag"])
+    ciphertext = base64.b64decode(data_chiffree["ciphertext"])
+
+    cipher = AES.new(cle, AES.MODE_GCM, nonce=nonce)
+    try:
+        contenu = cipher.decrypt_and_verify(ciphertext, tag).decode("utf-8")
+    except ValueError:
+        raise ValueError("❌ Échec du déchiffrement : clé ou données incorrectes.")
+
+    with open(chemin_sortie, "w", encoding="utf-8") as f:
+        f.write(contenu)
+
+    print(f"✅ Fichier déchiffré enregistré dans {chemin_sortie}")
+
+""" A utiliser dans main.py:
+if __name__ == "__main__":
+    # Génération d'une clé AES 256 bits (à sauvegarder en lieu sûr)
+    cle_secrete = get_random_bytes(32)
+    print("Clé secrète (base64) :", base64.b64encode(cle_secrete).decode("utf-8"))
+
+    # Exemple d'utilisation
+    chiffrer_fichier_json("donnees.json", "donnees_chiffrees.json", cle_secrete)
+    dechiffrer_fichier_json("donnees_chiffrees.json", "donnees_dechiffrees.json", cle_secrete)
+"""
 
 def controller_int(ndc, ndc_max, nombre, raison):
     while nombre > 0 and raison == "Combien de questions voulez-vous? ":
