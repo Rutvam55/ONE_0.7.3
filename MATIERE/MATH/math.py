@@ -42,6 +42,7 @@ def math_base():
             b = "+" + str(b)
     elif choix == "division":
         op = "/"
+        b = 0
         while b == 0:
             reponse_correct, b = choisir_un_nombre(-12, 12)
         a = reponse_correct * b

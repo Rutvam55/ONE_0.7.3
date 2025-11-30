@@ -1,5 +1,4 @@
 import json
-import os
 from pathlib import Path
 
 # Emplacement par défaut du fichier de sauvegarde
@@ -37,53 +36,59 @@ def charger_sauvegarde(chemin_json: str | Path | None = None):
                 donnees = json.load(fichier)
         except json.JSONDecodeError:
             print("Erreur : fichier de sauvegarde corrompu. Réinitialisation.")
-            return {"joueurs": {}}
+            return {"players": {}}
 
         # Migration: supporter l'ancien format plat vers le format imbriqué
-        for nom, joueur in list(donnees.get("joueurs", {}).items()):
-            if isinstance(joueur, dict) and "mot_de_passe" in joueur and "Francais" not in joueur:
+        for nom, player in list(donnees.get("players", {}).items()):
+            if isinstance(player, dict) and "mot_de_passe" in player and "Francais" not in player:
                 nouveau = {
-                    "mot_de_passe": joueur.get("mot_de_passe"),
-                    "best_score": joueur.get("best_score", 0),
+                    "mot_de_passe": player.get("mot_de_passe"),
+                    "best_score": player.get("best_score", 0),
                     "Francais": {
-                        "parties_jouees_Francais": joueur.get("parties_jouees_Francais", 0),
-                        "Level_Francais": joueur.get("Level_Francais", 0),
-                        "xp_Francais": joueur.get("xp_Francais", 0),
-                        "Max_xp_Francais": joueur.get("Max_xp_Francais", 1000),
+                        "parties_jouees_Francais": player.get("parties_jouees_Francais", 0),
+                        "Level_Francais": player.get("Level_Francais", 0),
+                        "xp_Francais": player.get("xp_Francais", 0),
+                        "Max_xp_Francais": player.get("Max_xp_Francais", 1000),
                     },
                     "Deutsch": {
-                        "parties_jouees_Deutsch": joueur.get("parties_jouees_Deutsch", 0),
-                        "Level_Deutsch": joueur.get("Level_Deutsch", 0),
-                        "xp_Deutsch": joueur.get("xp_Deutsch", 0),
-                        "Max_xp_Deutsch": joueur.get("Max_xp_Deutsch", 1000),
+                        "parties_jouees_Deutsch": player.get("parties_jouees_Deutsch", 0),
+                        "Level_Deutsch": player.get("Level_Deutsch", 0),
+                        "xp_Deutsch": player.get("xp_Deutsch", 0),
+                        "Max_xp_Deutsch": player.get("Max_xp_Deutsch", 1000),
                     },
                     "ScNat": {
-                        "parties_jouees_ScNat": joueur.get("parties_jouees_ScNat", 0),
-                        "Level_ScNat": joueur.get("Level_ScNat", 0),
-                        "xp_ScNat": joueur.get("xp_ScNat", 0),
-                        "Max_xp_ScNat": joueur.get("Max_xp_ScNat", 1000),
+                        "parties_jouees_ScNat": player.get("parties_jouees_ScNat", 0),
+                        "Level_ScNat": player.get("Level_ScNat", 0),
+                        "xp_ScNat": player.get("xp_ScNat", 0),
+                        "Max_xp_ScNat": player.get("Max_xp_ScNat", 1000),
                     },
                     "Anglais": {
-                        "parties_jouees_Anglais": joueur.get("parties_jouees_Anglais", 0),
-                        "Level_Anglais": joueur.get("Level_Anglais", 0),
-                        "xp_Anglais": joueur.get("xp_Anglais", 0),
-                        "Max_xp_Anglais": joueur.get("Max_xp_Anglais", 1000),
+                        "parties_jouees_Anglais": player.get("parties_jouees_Anglais", 0),
+                        "Level_Anglais": player.get("Level_Anglais", 0),
+                        "xp_Anglais": player.get("xp_Anglais", 0),
+                        "Max_xp_Anglais": player.get("Max_xp_Anglais", 1000),
                     },
                     "Math": {
-                        "parties_jouees_Math": joueur.get("parties_jouees_Math", 0),
-                        "Level_Math": joueur.get("Level_Math", 0),
-                        "xp_Math": joueur.get("xp_Math", 0),
-                        "Max_xp_Math": joueur.get("Max_xp_Math", 1000),
+                        "parties_jouees_Math": player.get("parties_jouees_Math", 0),
+                        "Level_Math": player.get("Level_Math", 0),
+                        "xp_Math": player.get("xp_Math", 0),
+                        "Max_xp_Math": player.get("Max_xp_Math", 1000),
+                    },
+                    "Geo": {
+                        "parties_jouees_Geo": player.get("parties_jouees_Geo", 0),
+                        "Level_Geo": player.get("Level_Geo", 0),
+                        "xp_Geo": player.get("xp_Geo", 0),
+                        "Max_xp_Geo": player.get("Max_xp_Geo", 1000)
                     },
                     "P": {
-                        "langue": joueur.get("langue", "FR")
+                        "langue": player.get("langue", "EN")
                     }
                 }
-                donnees["joueurs"][nom] = nouveau
+                donnees["players"][nom] = nouveau
         return donnees
 
     # fichier introuvable
-    return {"joueurs": {}}
+    return {"players": {}}
 
 
 def sauvegarder_auto(donnees, chemin_json: str | Path | None = None):
@@ -101,13 +106,13 @@ def sauvegarder_auto(donnees, chemin_json: str | Path | None = None):
 
 
 def ajouter_joueur(donnees, nom, mot_de_passe):
-    """Ajoute un nouveau joueur avec des données par défaut."""
-    if nom in donnees.get("joueurs", {}):
-        print("Ce joueur existe déjà.")
+    """Ajoute un nouveau player avec des données par défaut."""
+    if nom in donnees.get("players", {}):
+        print("Ce player existe déjà.")
         return False
 
-    donnees.setdefault("joueurs", {})
-    donnees["joueurs"][nom] = {
+    donnees.setdefault("players", {})
+    donnees["players"][nom] = {
         "mot_de_passe": mot_de_passe,
         "best_score": 0,
         "Francais": {
@@ -140,73 +145,85 @@ def ajouter_joueur(donnees, nom, mot_de_passe):
             "xp_Math": 0,
             "Max_xp_Math": 1000
         },
+        "Geo": {
+            "parties_jouees_Geo": 0,
+            "Level_Geo": 0,
+            "xp_Geo": 0,
+            "Max_xp_Geo": 1000
+        },
         "P": {
-            "langue": "FR"
+            "langue": "EN"
         }
     }
     return True
 
 
-def Level_up(joueur):
+def Level_up(player):
     # ScNat
-    if joueur.get("ScNat", {}).get("xp_ScNat", 0) >= joueur.get("ScNat", {}).get("Max_xp_ScNat", 1000):
-        joueur["ScNat"]["Level_ScNat"] += 1
-        joueur["ScNat"]["xp_ScNat"] = 0
-        joueur["ScNat"]["Max_xp_ScNat"] += 500
-        print(f"🎉 Level up ScNat -> {joueur['ScNat']['Level_ScNat']}")
+    if player.get("ScNat", {}).get("xp_ScNat", 0) >= player.get("ScNat", {}).get("Max_xp_ScNat", 1000):
+        player["ScNat"]["Level_ScNat"] += 1
+        player["ScNat"]["xp_ScNat"] = 0
+        player["ScNat"]["Max_xp_ScNat"] += 500
+        print(f"🎉 Level up ScNat -> {player['ScNat']['Level_ScNat']}")
     # Francais
-    if joueur.get("Francais", {}).get("xp_Francais", 0) >= joueur.get("Francais", {}).get("Max_xp_Francais", 1000):
-        joueur["Francais"]["Level_Francais"] += 1
-        joueur["Francais"]["xp_Francais"] = 0
-        joueur["Francais"]["Max_xp_Francais"] += 500
-        print(f"🎉 Level up Francais -> {joueur['Francais']['Level_Francais']}")
+    if player.get("Francais", {}).get("xp_Francais", 0) >= player.get("Francais", {}).get("Max_xp_Francais", 1000):
+        player["Francais"]["Level_Francais"] += 1
+        player["Francais"]["xp_Francais"] = 0
+        player["Francais"]["Max_xp_Francais"] += 500
+        print(f"🎉 Level up Francais -> {player['Francais']['Level_Francais']}")
     # Deutsch
-    if joueur.get("Deutsch", {}).get("xp_Deutsch", 0) >= joueur.get("Deutsch", {}).get("Max_xp_Deutsch", 1000):
-        joueur["Deutsch"]["Level_Deutsch"] += 1
-        joueur["Deutsch"]["xp_Deutsch"] = 0
-        joueur["Deutsch"]["Max_xp_Deutsch"] += 500
-        print(f"🎉 Level up Deutsch -> {joueur['Deutsch']['Level_Deutsch']}")
+    if player.get("Deutsch", {}).get("xp_Deutsch", 0) >= player.get("Deutsch", {}).get("Max_xp_Deutsch", 1000):
+        player["Deutsch"]["Level_Deutsch"] += 1
+        player["Deutsch"]["xp_Deutsch"] = 0
+        player["Deutsch"]["Max_xp_Deutsch"] += 500
+        print(f"🎉 Level up Deutsch -> {player['Deutsch']['Level_Deutsch']}")
     # Anglais
-    if joueur.get("Anglais", {}).get("xp_Anglais", 0) >= joueur.get("Anglais", {}).get("Max_xp_Anglais", 1000):
-        joueur["Anglais"]["Level_Anglais"] += 1
-        joueur["Anglais"]["xp_Anglais"] = 0
-        joueur["Anglais"]["Max_xp_Anglais"] += 500
-        print(f"🎉 Level up Anglais -> {joueur['Anglais']['Level_Anglais']}")
+    if player.get("Anglais", {}).get("xp_Anglais", 0) >= player.get("Anglais", {}).get("Max_xp_Anglais", 1000):
+        player["Anglais"]["Level_Anglais"] += 1
+        player["Anglais"]["xp_Anglais"] = 0
+        player["Anglais"]["Max_xp_Anglais"] += 500
+        print(f"🎉 Level up Anglais -> {player['Anglais']['Level_Anglais']}")
     # Math
-    if joueur.get("Math", {}).get("xp_Math", 0) >= joueur.get("Math", {}).get("Max_xp_Math", 1000):
-        joueur["Math"]["Level_Math"] += 1
-        joueur["Math"]["xp_Math"] = 0
-        joueur["Math"]["Max_xp_Math"] += 500
-        print(f"🎉 Level up Math -> {joueur['Math']['Level_Math']}")
+    if player.get("Math", {}).get("xp_Math", 0) >= player.get("Math", {}).get("Max_xp_Math", 1000):
+        player["Math"]["Level_Math"] += 1
+        player["Math"]["xp_Math"] = 0
+        player["Math"]["Max_xp_Math"] += 500
+        print(f"🎉 Level up Math -> {player['Math']['Level_Math']}")
+    # Geo
+    if player.get("Geo", {}).get("xp_Geo", 0) >= player.get("Geo", {}).get("Max_xp_Geo", 1000):
+        player["Geo"]["Level_Geo"] += 1
+        player["Geo"]["xp_Geo"] = 0
+        player["Geo"]["Max_xp_Geo"] += 500
+        print(f"🎉 Level up Geo -> {player['Geo']['Level_Geo']}")
 
 
 def selectionner_joueur(donnees, nom, mot_de_passe):
     """
-    Vérifie si le joueur existe et si le mot de passe est correct.
-    Retourne toujours (joueur, mot_correct)
-    joueur = dict ou None
+    Vérifie si le player existe et si le mot de passe est correct.
+    Retourne toujours (player, mot_correct)
+    player = dict ou None
     mot_correct = True / False
     """
-    if "joueurs" not in donnees:
+    if "players" not in donnees:
         print("Aucune sauvegarde chargée.")
         return None, False
 
     # Joueur n'existe pas
-    if nom not in donnees["joueurs"]:
+    if nom not in donnees["players"]:
         print("Joueur introuvable.")
         return None, False
 
-    joueur = donnees["joueurs"][nom]
+    player = donnees["players"][nom]
 
     # Problème de données
-    if "mot_de_passe" not in joueur:
-        print("Données du joueur corrompues.")
+    if "mot_de_passe" not in player:
+        print("Données du player corrompues.")
         return None, False
 
     # Mot de passe incorrect
-    if joueur["mot_de_passe"] != mot_de_passe:
+    if player["mot_de_passe"] != mot_de_passe:
         print("Mot de passe incorrect.")
         return None, False
 
     # Succès
-    return joueur, True
+    return player, True
