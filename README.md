@@ -1,4 +1,4 @@
-# 🚀 ONE (Version 0.8.0)
+# 🚀 ONE (Version 0.9.0)
 
 ##Langue
 * FR = Français, Französisch
@@ -52,6 +52,9 @@ python main.py
 * LUN 08/12/2025: correction des erreur (0.9.0)
     1. plus: meilleur securite
     2. plus: ameloration du parametre
+
+#### v0.9 (??? ??/??/????)
+* ??? ??/??/????: Geographie (0.9.0)
 
 #### v0.8 (LUN 17/11/2025)
 * LUN 17/11/2025: Paramètre (0.8.0)

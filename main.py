@@ -1,112 +1,60 @@
 import random
 import os
 import pwinput
-from CORE.link import set_player, Math, Francais, Deutsch, ScNat, Anglais, Geo
-from CORE.funk import sauvegarder_auto, charger_sauvegarde, ajouter_joueur, Level_up, selectionner_joueur, controller_int, DEFAULT_SAVE_FILE
+from CORE.link import set_player, Math, Francais, Deutsch, ScNat, Anglais, Geo, DataLoader, Histo
+from CORE.funk import controller_int, sauvegarde
 from CORE.langue import langue
+from CORE.button import Button
 from KI.ia import IA
 
-VERSION = "0.9.0"
+VERSION = "0.10.0"
+
+COLOR = DataLoader.load_data("COLOR")
+# Fallback en cas d'échec de chargement (pour prévenir le TypeError de la fois précédente)
+if COLOR is None:
+    print("⚠️\u001b[1; 31m Avertissement : Échec du chargement des données de couleur. Utilisation des codes ANSI par défaut.\u001b[0m")
+    COLOR = {
+        "CODE": "\033[",
+        "END CODE": "m",
+        "police": {"FAT": "1", "DIM": "2", "NONE": "0"},
+        "COLOR TEXT": {"RESET": "0", "GREEN": "32", "RED": "31", "DEFAULT": "39"},
+        "BACKGROUND COLOR": {"DEFAULT": "49"}
+    }
+
+def text_editor(text, police = "", text_color = "", background_color = ""):
+    """Encapsule le texte avec les codes ANSI pour la couleur et le style."""
+    
+    # Correction de l'AttributeError: .get doit être appelé sur les sous-dictionnaires (ex: COLOR["police"])
+    # et non sur le résultat qui est une chaîne (ex: COLOR["police"][police])
+    style_code = COLOR["police"].get(police, "")
+    text_code = COLOR["COLOR TEXT"].get(text_color, "")
+    background_code = COLOR["BACKGROUND COLOR"].get(background_color, "")
+
+    code = COLOR["CODE"]
+    end = COLOR["END CODE"]
+    
+    ansi = code
+    # On filtre les parties vides et on les joint par des points-virgules
+    parts = [part for part in [style_code, text_code, background_code] if part]
+    
+    # Si 'parts' est vide, on utilise seulement le code de reset pour l'appliquer.
+    if parts:
+        ansi += ";".join(parts) + end
+    else:
+        # Si aucun style, on utilise le code de reset au début pour éviter un crash
+        ansi = code + COLOR["COLOR TEXT"]["RESET"] + end
+
+    # Le code de reset est appliqué après le texte pour réinitialiser le terminal
+    return f"{ansi}{text}{code}{COLOR["COLOR TEXT"]["RESET"]}{end}"
+
 
 ia = IA()
-
+s = sauvegarde()
 
 def calculate_percentage(correct_answers, total_questions):
     """Calculate percentage of correct answers"""
     return (correct_answers / total_questions) * 100 if total_questions > 0 else 0
 
-
-# ===============================
-#       BUTTON CLASS
-# ===============================
-
-class Button:
-    """Button management for subject selection"""
-    
-    def __init__(self):
-        self.state = {
-            "scnat_1": False,
-            "scnat_1_1": False,
-            "scnat_1_2": False,
-
-            "francais_2": False,
-            "francais_2_1": False,
-            "francais_2_2": False,
-
-            "deutsch_3": False,
-            "deutsch_3_1": False,
-            "deutsch_3_2": True,
-
-            "anglais_4": False,
-            "anglais_4_1": False,
-            "anglais_4_2": False,
-
-            "math_5": False,
-            "math_5_1": False,
-
-            "geo_6": False,
-        }
-
-    def toggle(self, name):
-        """Toggle button state"""
-        if name in self.state:
-            self.state[name] = not self.state[name]
-        else:
-            print(f"[ERROR] '{name}' does not exist.")
-
-    def collect(self):
-        """Collect active menu choices"""
-        menu = []
-        choices_scnat = []
-        choices_francais = []
-        choices_deutsch = []
-        choices_anglais = []
-        choices_math = []
-        choices_geo = []
-        
-        # -------- SCNAT --------
-        if self.state["scnat_1"]:
-            menu.append("ScNat")
-            if self.state["scnat_1_1"]:
-                choices_scnat.append("element")
-            if self.state["scnat_1_2"]:
-                choices_scnat.append("ordnungszahl")
-
-        # -------- FRANCAIS --------
-        if self.state["francais_2"]:
-            menu.append("Francais")
-            if self.state["francais_2_1"]:
-                choices_francais.append("voc dif")
-            if self.state["francais_2_2"]:
-                choices_francais.append("verb")
-
-        # -------- DEUTSCH --------
-        if self.state["deutsch_3"]:
-            menu.append("Deutsch")
-            if self.state["deutsch_3_1"]:
-                choices_deutsch.append("Merkmale von Kurzgeschichten (Einfach)")
-            if self.state["deutsch_3_2"]:
-                choices_deutsch.append("Merkmale von Kurzgeschichten (Schwer)")
-
-        # -------- ANGLAIS --------
-        if self.state["anglais_4"]:
-            menu.append("Anglais")
-            if self.state["anglais_4_1"]:
-                choices_anglais.append("voc easy")
-            if self.state["anglais_4_2"]:
-                choices_anglais.append("voc impossible")
-
-        # -------- MATH --------
-        if self.state["math_5"]:
-            menu.append("Math")
-            if self.state["math_5_1"]:
-                choices_math.append("base")
-
-        # -------- GEO --------
-        if self.state["geo_6"]:
-            menu.append("Geo")
-        
-        return menu, choices_scnat, choices_francais, choices_deutsch, choices_anglais, choices_math, choices_geo
 
 
 # ===============================
@@ -119,14 +67,14 @@ connection = False
 
 while running:
 
-    data = charger_sauvegarde(DEFAULT_SAVE_FILE)
+    data = s.charger_sauvegarde(None)
 
     # =================================
     #  LOGIN
     # =================================
     while not connection:
         os.system("cls" if os.name == "nt" else "clear")
-        print("=== ONE ===")
+        print(text_editor("=== ONE ===", police = "FAT", text_color = "DEFAULT", background_color = "DEFAULT"))
         password_correct = False
         attempts = 3
 
@@ -134,42 +82,47 @@ while running:
             print("Too many incorrect attempts. Exiting.")
             exit()
 
-        username = input("Enter your name.\n> ")
+        username = input(text_editor("Enter your name.\n>\t", police = "UNDERLINE", text_color = "DEFAULT", background_color = "DEFAULT"))
         if not username:
             print("Username cannot be empty.")
             input("Press ENTER to continue...")
             continue
             
-        password = pwinput.pwinput(prompt="Enter your password.\n> ", mask='#')
+        password = pwinput.pwinput(prompt = text_editor("Enter your password.\n>\t", police = "UNDERLINE", text_color = "DEFAULT", background_color = "DEFAULT"), mask='#')
         if not password:
             print("Password cannot be empty.")
             input("Press ENTER to continue...")
             continue
             
-        player, password_correct = selectionner_joueur(data, username, password)
+        player, password_correct = s.selectionner_joueur(data, username, password)
+        while True:
+            if player is None:
+                create = input(text_editor("Player not found.\nCreate one? (Y/N)\n>\t", police = "DIM", text_color = "RED", background_color = "DEFAULT")).lower()
 
-        if player is None:
-            create = input("Player not found. Create one? (y/n) ")
-
-            if create.lower() == "y":
-                if ajouter_joueur(data, username, password):
-                    player = data["joueurs"][username]
-                    sauvegarder_auto(data, DEFAULT_SAVE_FILE)
-                else:
-                    print("ERROR")
-                    continue
-            else:
-                while password_correct is False and attempts > 0:
-                    username = input("Enter your name.\n> ")
-                    password = pwinput.pwinput(prompt="Enter your password.\n> ", mask='#')
-                    player, password_correct = selectionner_joueur(data, username, password)
-                    if password_correct is True:
+                if create in ["y", "oui", "yes", "ja"]:
+                    if s.ajouter_joueur(data, username, password):
+                        player = data["players"][username]
+                        s.sauvegarder_auto(data, )
                         break
-                    attempts -= 1
-                    print(f"Password: {password}\nAttempts remaining: {attempts}/3")
-                if attempts == 0 and password_correct is False:
-                    print("Too many incorrect attempts. Exiting.")
-                    exit()
+                    else:
+                        print("ERROR")
+                        continue
+                elif create in ["n", "non", "no", "nein"]:
+                    while password_correct is False and attempts > 0:
+                        username = input("Enter your name.\n>\t")
+                        password = pwinput.pwinput(prompt="Enter your password.\n>\t", mask='#')
+                        player, password_correct = s.selectionner_joueur(data, username, password)
+                        if password_correct is True:
+                            break
+                        attempts -= 1
+                        print(f"Password: {password}\nAttempts remaining: {attempts}/3")
+                    if attempts == 0 and password_correct is False:
+                        print("Too many incorrect attempts. Exiting.")
+                        exit()
+                else:
+                    print("Sorry we don't understand.")
+            else:
+                break
 
         connection = True
         set_player(player)
@@ -179,47 +132,7 @@ while running:
     # ===============================
     L = langue(username, player, VERSION, buttons.state)
 
-    # ===============================
-    #       PLAYER CLASS
-    # ===============================
-    class Player:
-        """Player statistics class"""
-        def __init__(self, player_data):
-            self.name = player_data["nom"]
-            self.password = player_data["mot_de_passe"]
-            
-            # ScNat
-            self.scnat_level = player_data["ScNat"]["Level_ScNat"]
-            self.scnat_xp = player_data["ScNat"]["xp_ScNat"]
-            self.scnat_max_xp = player_data["ScNat"]["Max_xp_ScNat"]
-            
-            # Francais
-            self.francais_level = player_data["Francais"]["Level_Francais"]
-            self.francais_xp = player_data["Francais"]["xp_Francais"]
-            self.francais_max_xp = player_data["Francais"]["Max_xp_Francais"]
-            
-            # Deutsch
-            self.deutsch_level = player_data["Deutsch"]["Level_Deutsch"]
-            self.deutsch_xp = player_data["Deutsch"]["xp_Deutsch"]
-            self.deutsch_max_xp = player_data["Deutsch"]["Max_xp_Deutsch"]
-            
-            # Anglais
-            self.anglais_level = player_data["Anglais"]["Level_Anglais"]
-            self.anglais_xp = player_data["Anglais"]["xp_Anglais"]
-            self.anglais_max_xp = player_data["Anglais"]["Max_xp_Anglais"]
 
-            # Math
-            self.math_level = player_data["Math"]["Level_Math"]
-            self.math_xp = player_data["Math"]["xp_Math"]
-            self.math_max_xp = player_data["Math"]["Max_xp_Math"]
-
-            # Geo
-            self.geo_level = player_data["Geo"]["Level_Geo"]
-            self.geo_xp = player_data["Geo"]["xp_Geo"]
-            self.geo_max_xp = player_data["Geo"]["Max_xp_Geo"]
-            
-            # Settings
-            self.language = player_data["P"]["langue"]
 
     # ===============================
     #       MAIN MENU
@@ -240,55 +153,75 @@ while running:
 
                 def show(btn, txt):
                     """Show button state"""
-                    state = "ON" if buttons.state[btn] else "OFF"
-                    print(f"{txt} ({state})")
+                    boole = "ON" if buttons.state[btn] else "OFF"
+                    if boole == "ON":
+                        state = text_editor("ON", police = "FAT", text_color = "GREEN", background_color = "DEFAULT")
+                    else:
+                        state = text_editor("OFF", police = "FAT", text_color = "RED", background_color = "DEFAULT")
+                    print(f"({state}) {txt} ")
+                    return boole
 
-                show("scnat_1", "1. ScNat")
-                show("scnat_1_1", "  1.1 Element Namen")
-                show("scnat_1_2", "  1.2 Ordnungszahl")
+                state = show("1", "1. Sciens Naturelle")
+                if state == "ON":
+                    _ = show("1_1", "\t1.1 Element Namen")
+                    _ = show("1_2", "\t1.2 Ordnungszahl")
 
-                show("francais_2", "2. Francais")
-                show("francais_2_1", "  2.1 Vocabulary (difficult)")
-                show("francais_2_2", "  2.2 Verbs")
+                state = show("2", "2. Francais")
+                if state == "ON":
+                    _ = show("2_1", "\t2.1 Vocabulary (difficult)")
+                    _ = show("2_2", "\t2.2 Verbs")
 
-                show("deutsch_3", "3. Deutsch")
-                show("deutsch_3_1", "  3.1 Kurzgeschichten (easy)")
-                show("deutsch_3_2", "  3.2 Kurzgeschichten (hard)")
+                state = show("3", "3. Deutsch")
+                if state == "ON":
+                    _ = show("3_1", "\t3.1 Kurzgeschichten (easy)")
+                    _ = show("3_2", "\t3.2 Kurzgeschichten (hard)")
 
-                show("anglais_4", "4. Anglais")
-                show("anglais_4_1", "  4.1 Easy vocabulary")
-                show("anglais_4_2", "  4.2 Impossible vocabulary")
+                state = show("4", "4. Anglais")
+                if state == "ON":
+                    _ = show("4_1", "\t4.1 Easy vocabulary")
+                    _ = show("4_2", "\t4.2 Impossible vocabulary")
 
-                show("math_5", "5. Math")
-                show("math_5_1", "  5.1 Base")
+                state = show("5", "5. Math")
+                if state == "ON":
+                    _ = show("5_1", "\t5.1 Base")
 
-                show("geo_6", "6. Geography")
+                state = show("6", "6. Geography")
+                if state == "ON":
+                    _ = show("6_1", "\t6.1 les plaque tektonique")
 
-                print("\nq: Quit\nENTER to validate, or choose a button.")
+                state = show("7", "7. History")
+                if state == "ON":
+                    _ = show("7_1", "\t7.1 Theorie der platten tektonik")
+                    _ = show("7_2", "\t7.2 Induastrialisierung")
 
-                action = input("> ").strip()
+                action = input("\nq: Quit\nENTER to validate, or choose a button.\n>\t").strip()
 
                 mapping = {
-                    "1": "scnat_1",
-                    "1.1": "scnat_1_1",
-                    "1.2": "scnat_1_2",
+                    "1": "1",
+                    "1.1": "1_1",
+                    "1.2": "1_2",
 
-                    "2": "francais_2",
-                    "2.1": "francais_2_1",
-                    "2.2": "francais_2_2",
+                    "2": "2",
+                    "2.1": "2_1",
+                    "2.2": "2_2",
 
-                    "3": "deutsch_3",
-                    "3.1": "deutsch_3_1",
-                    "3.2": "deutsch_3_2",
+                    "3": "3",
+                    "3.1": "3_1",
+                    "3.2": "3_2",
 
-                    "4": "anglais_4",
-                    "4.1": "anglais_4_1",
-                    "4.2": "anglais_4_2",
+                    "4": "4",
+                    "4.1": "4_1",
+                    "4.2": "4_2",
 
-                    "5": "math_5",
-                    "5.1": "math_5_1",
+                    "5": "5",
+                    "5.1": "5_1",
 
-                    "6": "geo_6"
+                    "6": "6",
+                    "6.1": "6_1",
+
+                    "7": "7",
+                    "7.1": "7_1",
+                    "7.2": "7_2"
                 }
                 
                 if action in mapping:
@@ -306,14 +239,14 @@ while running:
             # =======================================
             #         START GAMES
             # =======================================
-            menu, choices_scnat, choices_francais, choices_deutsch, choices_anglais, choices_math, choices_geo = buttons.collect()
+            menu, choices_scnat, choices_francais, choices_deutsch, choices_anglais, choices_math, choices_geo, choices_histo = buttons.collect()
             
             if not menu:
                 print("No games selected in settings.")
                 input("Press ENTER to continue...")
                 continue
             
-            mode_choice = input("Select mode:\n1: Infinite\n2: Normal\n> ").strip().lower()
+            mode_choice = input("Select mode:\n1: Infinite\n2: Normal\n>\t").strip().lower()
             
             # =====================================
             #            INFINITE MODE
@@ -344,12 +277,28 @@ while running:
                     elif selected_game == "Geo":
                         exercise = Geo()
                         score, xp, streak = exercise.menu_geo(choices_geo, question_num)
+                    elif selected_game == "Histo":
+                        exercise = Histo()
+                        score, xp, streak = exercise.menu_histo(choices_histo, question_num)
                     else:
                         print("Game selection error.")
                         streak = False
                     
-                    Level_up(player)
-                    sauvegarder_auto(data, DEFAULT_SAVE_FILE)
+                    if exercise_score == True:
+                        score += 1
+                    elif exercise_score == None or exercise_score == False:
+                        score = score
+                    if xp == True:
+                        XP += 50
+                    elif xp == False:
+                        XP -= 50
+                    if streak == True or streak == None:
+                        streak = True
+                    else:
+                        streak = False
+
+                    s.Level_up(player)
+                    s.sauvegarder_auto(data)
                     os.system('cls' if os.name == 'nt' else 'clear')
 
             # =====================================
@@ -361,7 +310,7 @@ while running:
                 max_attempts = attempts
                 score = 0
                 question_num = 0
-                
+
                 question_num = controller_int(attempts, max_attempts, question_num, "How many questions do you want?")
                 total_questions = question_num
                 
@@ -371,33 +320,41 @@ while running:
                     if selected_game == "ScNat":
                         exercise = ScNat()
                         exercise_score, xp, streak = exercise.menu_scnat(choices_scnat, (i + 1))
-                        score += exercise_score
                     elif selected_game == "Francais":
                         exercise = Francais()
                         exercise_score, xp, streak = exercise.menu_francais(choices_francais, (i + 1))
-                        score += exercise_score
                     elif selected_game == "Deutsch":
                         exercise = Deutsch()
                         exercise_score, xp, streak = exercise.menu_deutsch(choices_deutsch, (i + 1))
-                        score += exercise_score
                     elif selected_game == "Anglais":
                         exercise = Anglais()
                         exercise_score, xp, streak = exercise.menu_anglais(choices_anglais, (i + 1))
-                        score += exercise_score
                     elif selected_game == "Math":
                         exercise = Math()
                         exercise_score, xp, streak = exercise.menu_math(choices_math, (i + 1))
-                        score += exercise_score
                     elif selected_game == "Geo":
                         exercise = Geo()
                         exercise_score, xp, streak = exercise.menu_geo(choices_geo, (i + 1))
-                        score += exercise_score
                     else:
                         print("Game selection error.")
                         streak = False
                     
-                    Level_up(player)
-                    sauvegarder_auto(data, DEFAULT_SAVE_FILE)
+                    if exercise_score == True:
+                        score += 1
+                    elif exercise_score == None or exercise_score == False:
+                        score = score
+                    if xp == True:
+                        XP += 50
+                    elif xp == False:
+                        XP -= 50
+                    if streak == True or streak == None:
+                        streak = True
+                    else:
+                        streak = False
+
+
+                    s.Level_up(player)
+                    s.sauvegarder_auto(data)
                     if i < question_num - 1:
                         input("Press ENTER to continue...")
                     os.system('cls' if os.name == 'nt' else 'clear')
@@ -479,7 +436,7 @@ while running:
                     print(f"Error: {e}")
                 
                 input("Press ENTER to continue...")
-                sauvegarder_auto(data, DEFAULT_SAVE_FILE)
+                s.sauvegarder_auto(data, )
 
         # =======================================
         #         QUIT GAME

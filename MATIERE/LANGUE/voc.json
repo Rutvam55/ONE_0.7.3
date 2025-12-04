@@ -1,13 +1,15 @@
 {
     "anglais_voc1": {
         "afraid": {
-            "language": {
             "EN": "afraid",
             "FR": "peur",
             "DE": "angst"
-            }
         },
-        "afternoon": "après-midi",
+        "afternoon": {
+            "EN": "afternoon",
+            "FR": "après-midi",
+            "DE": "?"
+        },
         "again": "à nouveau",
         "age": "âge",
         "agree": "être d'accord",

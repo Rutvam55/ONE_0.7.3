@@ -1,46 +1,50 @@
-def langue(nom, joueur, v, boutton_state):
-
-    scnat = boutton_state["scnat_1"]
-    scnat_1 = boutton_state["scnat_1_1"]
-    scnat_2 = boutton_state["scnat_1_2"]
+def langue(nom, joueur, v, boutton_state):  
+    scnat = boutton_state["1"]
+    scnat_1 = boutton_state["1_1"]
+    scnat_2 = boutton_state["1_2"]
     
-    francais = boutton_state["francais_2"]
-    francais_1 = boutton_state["francais_2_1"]
-    francais_2 = boutton_state["francais_2_2"]
+    francais = boutton_state["2"]
+    francais_1 = boutton_state["2_1"]
+    francais_2 = boutton_state["2_2"]
     
-    deutsch = boutton_state["deutsch_3"]
-    deutsch_1 = boutton_state["deutsch_3_1"]
-    deutsch_2 = boutton_state["deutsch_3_2"]
+    deutsch = boutton_state["3"]
+    deutsch_1 = boutton_state["3_1"]
+    deutsch_2 = boutton_state["3_2"]
     
-    anglais = boutton_state["anglais_4"]
-    anglais_1 = boutton_state["anglais_4_1"]
-    anglais_2 = boutton_state["anglais_4_2"]
+    anglais = boutton_state["4"]
+    anglais_1 = boutton_state["4_1"]
+    anglais_2 = boutton_state["4_2"]
     
-    math = boutton_state["math_5"]
-    math_1 = boutton_state["math_5_1"]
+    math = boutton_state["5"]
+    math_1 = boutton_state["5_1"]
     
-    geo = boutton_state["geo_6"]
+    geo = boutton_state["6"]
+    geo_1 = boutton_state["6_1"]
+    
+    Histo = boutton_state["7"]
+    Histo_1 = boutton_state["7_1"]
+    Histo_2 = boutton_state["7_2"]
 
     FR = {
         "main.1.p": "Bienvenue, {name} !\nTu veux faire quoi?",
-        "main.2.i": "1. Entrainemant\n2. INL\nP. Parametre\n> ",
-        "main.3.i": "__PARAMETRE__\n1. Langue: {langue}\n2. v: {v}",
+        "main.2.i": "1. Entrainemant\n2. INL\nP. Parametre\n>\t",
+        "main.3.i": "__PARAMETRE__\n1. Langue: {langue}\n2. v: {v}\n>\t",
         "main.4.p": "Appuie sur Entrée pour lancer le quiz avec les modes sélectionnés.",
-        "main.5.i": "Entrer votre réponse (tape 1-5 pour basculer): ",
+        "main.5.i": ">\t",
         "main.6.p": "Erreur : aucun mode sélectionné. Sélectionnez au moins un mode.",
         "main.7.p": "1. ScNat ({scnat})",
-        "main.8.p": "    1.1. Nom des elemente ({scnat_1})"
+        "main.8.p": "\t1.1. Nom des elemente ({scnat_1})"
     }
 
     EN = {
         "main.1.p": "Welcome, {name}!\nWhat would you like to do?",
-        "main.2.i": "1. Training\nS. Setting",
+        "main.2.i": "1. Training\nS. Setting\n>\t",
         "main.3.i": "__SETTING__\n1. Language: {langue}\n2. v: {v}",
         "main.4.p": "Press of Enter to start the game.",
         "main.5.i": "Enter your answer (tape 1-5 or (1.2 5.1)): ",
         "main.6.p": "!!! ERROR !!!\n*restart",
         "main.7.p": "1. ScNat ({scnat})",
-        "main.8.p": "    1.1. Name of the elemente ({scnat_1})"
+        "main.8.p": "\t1.1. Name of the elemente ({scnat_1})"
     }
 
     DE = {
@@ -51,7 +55,7 @@ def langue(nom, joueur, v, boutton_state):
         "main.5.i": "Geben sie ihre antwort (tape 1-5 or (1.2 5.1)): ",
         "main.6.p": "!!! FEHLER !!!\n*NEUSTART",
         "main.7.p": "1. ScNat ({scnat})",
-        "main.8.p": "    1.1. Name der elemente ({scnat_1})"
+        "main.8.p": "\t1.1. Name der elemente ({scnat_1})"
     }
 
     langue_actuelle = joueur["P"]["langue"]
@@ -62,7 +66,7 @@ def langue(nom, joueur, v, boutton_state):
     elif langue_actuelle == "DE":
         La = DE
     else:
-        La = FR  # Par défaut: Français
+        La = EN  # Par défaut: Français
 
     # Formatage final
     return {k: v.format(
@@ -83,5 +87,9 @@ def langue(nom, joueur, v, boutton_state):
         anglais_2 = "ON" if anglais_2 else "OFF",
         math = "ON" if math else "OFF",
         math_1 = "ON" if math_1 else "OFF",
-        geo = "ON" if geo else "OFF"
+        geo = "ON" if geo else "OFF",
+        geo_1 = "ON" if geo_1 else "OFF",
+        Histo = "ON" if Histo else "OFF",
+        Histo_1 = "ON" if Histo_1 else "OFF",
+        Histo_2 = "ON" if Histo_2 else "OFF"
     ) for k, v in La.items()}
