@@ -13,7 +13,6 @@
         "STRIKETHOUGH": "9"
     },
     "COLOR TEXT": {
-        "RESET": "0",
         "BLACK": "30",
         "RED": "31",
         "GREEN": "32",
@@ -35,5 +34,6 @@
         "WHITE": "47",
         "DEFAULT": "49"
     },
+    "RESET": "0",
     "END CODE": "m"
 }

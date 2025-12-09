@@ -15,9 +15,10 @@ if COLOR is None:
     print("⚠️\u001b[1; 31m Avertissement : Échec du chargement des données de couleur. Utilisation des codes ANSI par défaut.\u001b[0m")
     COLOR = {
         "CODE": "\033[",
+        "RESET": "0",
         "END CODE": "m",
         "police": {"FAT": "1", "DIM": "2", "NONE": "0"},
-        "COLOR TEXT": {"RESET": "0", "GREEN": "32", "RED": "31", "DEFAULT": "39"},
+        "COLOR TEXT": {"GREEN": "32", "RED": "31", "DEFAULT": "39"},
         "BACKGROUND COLOR": {"DEFAULT": "49"}
     }
 
@@ -31,6 +32,7 @@ def text_editor(text, police = "", text_color = "", background_color = ""):
     background_code = COLOR["BACKGROUND COLOR"].get(background_color, "")
 
     code = COLOR["CODE"]
+    reset = COLOR["RESET"]
     end = COLOR["END CODE"]
     
     ansi = code
@@ -45,7 +47,7 @@ def text_editor(text, police = "", text_color = "", background_color = ""):
         ansi = code + COLOR["COLOR TEXT"]["RESET"] + end
 
     # Le code de reset est appliqué après le texte pour réinitialiser le terminal
-    return f"{ansi}{text}{code}{COLOR["COLOR TEXT"]["RESET"]}{end}"
+    return f"{ansi}{text}{code}{reset}{end}"
 
 
 ia = IA()
@@ -165,36 +167,43 @@ while running:
                 if state == "ON":
                     _ = show("1_1", "\t1.1 Element Namen")
                     _ = show("1_2", "\t1.2 Ordnungszahl")
+                    print("")
 
                 state = show("2", "2. Francais")
                 if state == "ON":
                     _ = show("2_1", "\t2.1 Vocabulary (difficult)")
                     _ = show("2_2", "\t2.2 Verbs")
+                    print("")
 
                 state = show("3", "3. Deutsch")
                 if state == "ON":
                     _ = show("3_1", "\t3.1 Kurzgeschichten (easy)")
                     _ = show("3_2", "\t3.2 Kurzgeschichten (hard)")
+                    print("")
 
                 state = show("4", "4. Anglais")
                 if state == "ON":
                     _ = show("4_1", "\t4.1 Easy vocabulary")
                     _ = show("4_2", "\t4.2 Impossible vocabulary")
+                    print("")
 
                 state = show("5", "5. Math")
                 if state == "ON":
                     _ = show("5_1", "\t5.1 Base")
+                    print("")
 
                 state = show("6", "6. Geography")
                 if state == "ON":
                     _ = show("6_1", "\t6.1 les plaque tektonique")
+                    print("")
 
                 state = show("7", "7. History")
                 if state == "ON":
                     _ = show("7_1", "\t7.1 Theorie der platten tektonik")
                     _ = show("7_2", "\t7.2 Induastrialisierung")
+                    print("")
 
-                action = input("\nq: Quit\nENTER to validate, or choose a button.\n>\t").strip()
+                action = input("-" * 40, "\nq: Quit\nENTER to validate, or choose a button.\n>\t").strip()
 
                 mapping = {
                     "1": "1",

@@ -766,11 +766,12 @@ class Geo(Exercise):
 class Histo(Exercise):
     """Exercices d'histoire"""
  
-    def steps(self):
+    def menu_histo(self):
         """Exécute toutes les étapes d'un exercice"""
         answer, correct_answer = self.step_one()
-        juge = self.step_two(answer, correct_answer)
-        self.step_three(juge)
+        self.juge = self.step_two(answer, correct_answer)
+        self.score, self.xp, self.streak = self.step_three(self.juge)
+        return self.score, self.xp, self.streak
         # ajoute d'autres étapes si nécessaire
  
     def step_one(self):
