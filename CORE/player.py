@@ -4,43 +4,44 @@
 class Player:
     """Player statistics class"""
     def __init__(self, player_data):
-        self.name = player_data["nom"]
-        self.password = player_data["mot_de_passe"]
-        
+        # Utilise .get pour éviter les KeyError si la structure est incomplète
+        self.name = player_data.get("nom") or player_data.get("username") or "<unknown>"
+        self.password = player_data.get("mot_de_passe", "")
+
         # ScNat
-        self.scnat_level = player_data["ScNat"]["Level_ScNat"]
-        self.scnat_xp = player_data["ScNat"]["xp_ScNat"]
-        self.scnat_max_xp = player_data["ScNat"]["Max_xp_ScNat"]
+        self.scnat_level = player_data.get("ScNat", {}).get("Level_ScNat", 0)
+        self.scnat_xp = player_data.get("ScNat", {}).get("xp_ScNat", 0)
+        self.scnat_max_xp = player_data.get("ScNat", {}).get("Max_xp_ScNat", 1000)
         
         # Francais
-        self.francais_level = player_data["Francais"]["Level_Francais"]
-        self.francais_xp = player_data["Francais"]["xp_Francais"]
-        self.francais_max_xp = player_data["Francais"]["Max_xp_Francais"]
+        self.francais_level = player_data.get("Francais", {}).get("Level_Francais", 0)
+        self.francais_xp = player_data.get("Francais", {}).get("xp_Francais", 0)
+        self.francais_max_xp = player_data.get("Francais", {}).get("Max_xp_Francais", 1000)
         
         # Deutsch
-        self.deutsch_level = player_data["Deutsch"]["Level_Deutsch"]
-        self.deutsch_xp = player_data["Deutsch"]["xp_Deutsch"]
-        self.deutsch_max_xp = player_data["Deutsch"]["Max_xp_Deutsch"]
+        self.deutsch_level = player_data.get("Deutsch", {}).get("Level_Deutsch", 0)
+        self.deutsch_xp = player_data.get("Deutsch", {}).get("xp_Deutsch", 0)
+        self.deutsch_max_xp = player_data.get("Deutsch", {}).get("Max_xp_Deutsch", 1000)
         
         # Anglais
-        self.anglais_level = player_data["Anglais"]["Level_Anglais"]
-        self.anglais_xp = player_data["Anglais"]["xp_Anglais"]
-        self.anglais_max_xp = player_data["Anglais"]["Max_xp_Anglais"]
+        self.anglais_level = player_data.get("Anglais", {}).get("Level_Anglais", 0)
+        self.anglais_xp = player_data.get("Anglais", {}).get("xp_Anglais", 0)
+        self.anglais_max_xp = player_data.get("Anglais", {}).get("Max_xp_Anglais", 1000)
 
         # Math
-        self.math_level = player_data["Math"]["Level_Math"]
-        self.math_xp = player_data["Math"]["xp_Math"]
-        self.math_max_xp = player_data["Math"]["Max_xp_Math"]
+        self.math_level = player_data.get("Math", {}).get("Level_Math", 0)
+        self.math_xp = player_data.get("Math", {}).get("xp_Math", 0)
+        self.math_max_xp = player_data.get("Math", {}).get("Max_xp_Math", 1000)
 
         # Geo
-        self.geo_level = player_data["Geo"]["Level_Geo"]
-        self.geo_xp = player_data["Geo"]["xp_Geo"]
-        self.geo_max_xp = player_data["Geo"]["Max_xp_Geo"]
+        self.geo_level = player_data.get("Geo", {}).get("Level_Geo", 0)
+        self.geo_xp = player_data.get("Geo", {}).get("xp_Geo", 0)
+        self.geo_max_xp = player_data.get("Geo", {}).get("Max_xp_Geo", 1000)
         
         # Histoire
-        self.Histo_level = player_data["Histo"]["Level_Histo"]
-        self.Histo_xp = player_data["Histo"]["xp_Histo"]
-        self.Histo_max_xp = player_data["Histo"]["Max_xp_Histo"]
+        self.Histo_level = player_data.get("Histo", {}).get("Level_Histo", 0)
+        self.Histo_xp = player_data.get("Histo", {}).get("xp_Histo", 0)
+        self.Histo_max_xp = player_data.get("Histo", {}).get("Max_xp_Histo", 1000)
         
         # Settings
-        self.language = player_data["P"]["langue"]
+        self.language = player_data.get("P", {}).get("langue", "EN")

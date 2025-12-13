@@ -1,3 +1,12 @@
+"""CORE.funk
+
+Module de gestion des sauvegardes et utilitaires pour l'application ONE.
+Contient :
+- chargement/écriture JSON
+- création de joueurs
+- gestion du XP / level-up
+"""
+
 import json
 from pathlib import Path
 
@@ -17,8 +26,19 @@ def controller_int(ndc, ndc_max, nombre, raison):
     return 0
 
 class sauvegarde:
+    """Classe responsable de la persistance des données utilisateurs.
+
+    Méthodes principales :
+    - charger_sauvegarde
+    - sauvegarder_auto
+    - ajouter_joueur
+    - ajouter_xp
+    - Level_up
+    - selectionner_joueur
+    """
+
     def __init__(self):
-        # emplacement du fichier de sauvegarde
+        # emplacement du fichier de sauvegarde (par défaut : racine/DATA/sauvegarde.json)
         self.ROOT = Path(__file__).parent.parent
         self.DEFAULT_SAVE_FILE = self.ROOT / "DATA" / "sauvegarde.json"
 
@@ -45,6 +65,7 @@ class sauvegarde:
                     nouveau = {
                         "mot_de_passe": player.get("mot_de_passe"),
                         "best_score": player.get("best_score", 0),
+                        "connections": player.get("connections", True),
                         "Francais": {
                             "parties_jouees_Francais": player.get("parties_jouees_Francais", 0),
                             "Level_Francais": player.get("Level_Francais", 0),
@@ -80,6 +101,12 @@ class sauvegarde:
                             "Level_Geo": player.get("Level_Geo", 0),
                             "xp_Geo": player.get("xp_Geo", 0),
                             "Max_xp_Geo": player.get("Max_xp_Geo", 1000)
+                        },
+                        "Histo": {
+                            "parties_jouees_Histo": player.get("parties_jouees_Histo", 0),
+                            "Level_Histo": player.get("Level_Histo", 0),
+                            "xp_Histo": player.get("xp_Histo", 0),
+                            "Max_xp_Histo": player.get("Max_xp_Histo", 1000)
                         },
                         "P": {
                             "langue": player.get("langue", "EN")
@@ -150,6 +177,12 @@ class sauvegarde:
                 "xp_Geo": 0,
                 "Max_xp_Geo": 1000
             },
+            "Histo": {
+                "parties_jouees_Histo": 0,
+                "Level_Histo": 0,
+                "xp_Histo": 0,
+                "Max_xp_Histo": 1000
+            },
             "P": {
                 "langue": "EN"
             }
@@ -193,6 +226,56 @@ class sauvegarde:
             player["Geo"]["xp_Geo"] = 0
             player["Geo"]["Max_xp_Geo"] += 500
             print(f"🎉 Level up Geo -> {player['Geo']['Level_Geo']}")
+        # Histo
+        if player.get("Histo", {}).get("xp_Histo", 0) >= player.get("Histo", {}).get("Max_xp_Histo", 1000):
+            player["Histo"]["Level_Histo"] += 1
+            player["Histo"]["xp_Histo"] = 0
+            player["Histo"]["Max_xp_Histo"] += 500
+            print(f"🎉 Level up Histo -> {player['Histo']['Level_Histo']}")
+
+    def ajouter_xp(self, player, sujet, montant=50, increment_partie=True):
+        """Ajoute du XP à un joueur pour un sujet donné.
+
+        - `player` : dictionnaire du joueur (ex: data['players'][nom])
+        - `sujet` : chaîne parmi 'Francais','Deutsch','ScNat','Anglais','Math','Geo','Histo'
+        - `montant` : entier à ajouter (peut être négatif)
+        - `increment_partie` : si True, incrémente le compteur de parties jouées
+
+        Retourne True si succès, False si sujet inconnu.
+        """
+        cle_xp = f"xp_{sujet}"
+        cle_parties = f"parties_jouees_{sujet}"
+
+        if sujet not in player:
+            # créer la structure minimale si manquante
+            player[sujet] = {cle_xp: 0, cle_parties: 0, f"Level_{sujet}": 0, f"Max_xp_{sujet}": 1000}
+
+        # Normaliser noms de clés existantes (conserver compatibilité)
+        # on recherche la clé réelle dans le dict du sujet
+        sujet_dict = player[sujet]
+        # trouver la clé xp existante
+        xp_key = None
+        for k in sujet_dict:
+            if k.lower().startswith('xp_'):
+                xp_key = k
+                break
+        if xp_key is None:
+            xp_key = cle_xp
+
+        parties_key = None
+        for k in sujet_dict:
+            if k.lower().startswith('parties_jouees') or k.lower().startswith('parties'):
+                parties_key = k
+                break
+        if parties_key is None:
+            parties_key = cle_parties
+
+        # Ajouter le XP
+        sujet_dict[xp_key] = sujet_dict.get(xp_key, 0) + montant
+        if increment_partie:
+            sujet_dict[parties_key] = sujet_dict.get(parties_key, 0) + 1
+
+        return True
 
     def selectionner_joueur(self, donnees, nom, mot_de_passe):
         """

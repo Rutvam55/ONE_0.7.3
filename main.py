@@ -1,57 +1,33 @@
-import random
+"""ONE - Application console d'entraînement multi-matières.
+
+Fichier principal qui gère :
+- authentification
+- sélection des matières/modes
+- boucle de jeu (normal / infinite)
+- intégration IA (INLL)
+
+Ce script est prévu pour être exécuté en console.
+"""
+
 import os
 import pwinput
-from CORE.link import set_player, Math, Francais, Deutsch, ScNat, Anglais, Geo, DataLoader, Histo
-from CORE.funk import controller_int, sauvegarde
-from CORE.langue import langue
-from CORE.button import Button
-from KI.ia import IA
+import random
+import CORE.link as link
 
-VERSION = "0.10.0"
+# helpers et singletons récupérés via getters pour éviter effets de bord à l'import
+set_player = link.set_player
+controller_int = link.controller_int
+langue = link.langue
 
-COLOR = DataLoader.load_data("COLOR")
-# Fallback en cas d'échec de chargement (pour prévenir le TypeError de la fois précédente)
-if COLOR is None:
-    print("⚠️\u001b[1; 31m Avertissement : Échec du chargement des données de couleur. Utilisation des codes ANSI par défaut.\u001b[0m")
-    COLOR = {
-        "CODE": "\033[",
-        "RESET": "0",
-        "END CODE": "m",
-        "police": {"FAT": "1", "DIM": "2", "NONE": "0"},
-        "COLOR TEXT": {"GREEN": "32", "RED": "31", "DEFAULT": "39"},
-        "BACKGROUND COLOR": {"DEFAULT": "49"}
-    }
+# instances fréquemment utilisées
+s = link.get_sauvegarde()
+couleurs = link.get_couleurs()
+buttons = link.get_buttons()
+ci = link.get_ci()
+Data_Loader = link.get_data_loader()
+ia = link.get_ia()
 
-def text_editor(text, police = "", text_color = "", background_color = ""):
-    """Encapsule le texte avec les codes ANSI pour la couleur et le style."""
-    
-    # Correction de l'AttributeError: .get doit être appelé sur les sous-dictionnaires (ex: COLOR["police"])
-    # et non sur le résultat qui est une chaîne (ex: COLOR["police"][police])
-    style_code = COLOR["police"].get(police, "")
-    text_code = COLOR["COLOR TEXT"].get(text_color, "")
-    background_code = COLOR["BACKGROUND COLOR"].get(background_color, "")
-
-    code = COLOR["CODE"]
-    reset = COLOR["RESET"]
-    end = COLOR["END CODE"]
-    
-    ansi = code
-    # On filtre les parties vides et on les joint par des points-virgules
-    parts = [part for part in [style_code, text_code, background_code] if part]
-    
-    # Si 'parts' est vide, on utilise seulement le code de reset pour l'appliquer.
-    if parts:
-        ansi += ";".join(parts) + end
-    else:
-        # Si aucun style, on utilise le code de reset au début pour éviter un crash
-        ansi = code + COLOR["COLOR TEXT"]["RESET"] + end
-
-    # Le code de reset est appliqué après le texte pour réinitialiser le terminal
-    return f"{ansi}{text}{code}{reset}{end}"
-
-
-ia = IA()
-s = sauvegarde()
+VERSION = "1.0.0"
 
 def calculate_percentage(correct_answers, total_questions):
     """Calculate percentage of correct answers"""
@@ -63,7 +39,6 @@ def calculate_percentage(correct_answers, total_questions):
 #       MAIN PROGRAM
 # ===============================
 
-buttons = Button()
 running = True
 connection = False
 
@@ -76,7 +51,7 @@ while running:
     # =================================
     while not connection:
         os.system("cls" if os.name == "nt" else "clear")
-        print(text_editor("=== ONE ===", police = "FAT", text_color = "DEFAULT", background_color = "DEFAULT"))
+        print(couleurs.text_editor("=== ONE ===", police = "FAT", text_color = "DEFAULT", background_color = "DEFAULT"))
         password_correct = False
         attempts = 3
 
@@ -84,13 +59,13 @@ while running:
             print("Too many incorrect attempts. Exiting.")
             exit()
 
-        username = input(text_editor("Enter your name.\n>\t", police = "UNDERLINE", text_color = "DEFAULT", background_color = "DEFAULT"))
+        username = input(couleurs.text_editor("Enter your name.\n>\t", police = "UNDERLINE", text_color = "DEFAULT", background_color = "DEFAULT"))
         if not username:
             print("Username cannot be empty.")
             input("Press ENTER to continue...")
             continue
             
-        password = pwinput.pwinput(prompt = text_editor("Enter your password.\n>\t", police = "UNDERLINE", text_color = "DEFAULT", background_color = "DEFAULT"), mask='#')
+        password = pwinput.pwinput(prompt = couleurs.text_editor("Enter your password.\n>\t", police = "UNDERLINE", text_color = "DEFAULT", background_color = "DEFAULT"), mask='#')
         if not password:
             print("Password cannot be empty.")
             input("Press ENTER to continue...")
@@ -99,7 +74,7 @@ while running:
         player, password_correct = s.selectionner_joueur(data, username, password)
         while True:
             if player is None:
-                create = input(text_editor("Player not found.\nCreate one? (Y/N)\n>\t", police = "DIM", text_color = "RED", background_color = "DEFAULT")).lower()
+                create = input(couleurs.text_editor("Player not found.\nCreate one? (Y/N)\n>\t", police = "DIM", text_color = "RED", background_color = "DEFAULT")).lower()
 
                 if create in ["y", "oui", "yes", "ja"]:
                     if s.ajouter_joueur(data, username, password):
@@ -123,6 +98,7 @@ while running:
                         exit()
                 else:
                     print("Sorry we don't understand.")
+                    a = a
             else:
                 break
 
@@ -157,9 +133,9 @@ while running:
                     """Show button state"""
                     boole = "ON" if buttons.state[btn] else "OFF"
                     if boole == "ON":
-                        state = text_editor("ON", police = "FAT", text_color = "GREEN", background_color = "DEFAULT")
+                        state = couleurs.text_editor("ON", police = "FAT", text_color = "GREEN", background_color = "DEFAULT")
                     else:
-                        state = text_editor("OFF", police = "FAT", text_color = "RED", background_color = "DEFAULT")
+                        state = couleurs.text_editor("OFF", police = "FAT", text_color = "RED", background_color = "DEFAULT")
                     print(f"({state}) {txt} ")
                     return boole
 
@@ -202,8 +178,8 @@ while running:
                     _ = show("7_1", "\t7.1 Theorie der platten tektonik")
                     _ = show("7_2", "\t7.2 Induastrialisierung")
                     print("")
-
-                action = input("-" * 40, "\nq: Quit\nENTER to validate, or choose a button.\n>\t").strip()
+                print("=" * 40)
+                action = input("\nq: Quit\nENTER to validate, or choose a button.\n>\t").strip()
 
                 mapping = {
                     "1": "1",
@@ -258,49 +234,38 @@ while running:
             mode_choice = input("Select mode:\n1: Infinite\n2: Normal\n>\t").strip().lower()
             
             # =====================================
-            #            INFINITE MODE
+            #           INFINITE MODE
             # =====================================
             if mode_choice in ["1", "infinite"]:
                 streak = True
-                question_num = 0
+                ndq = 0
                 
-                while streak:
-                    question_num += 1
-                    selected_game = random.choice(menu)
+                while streak == True:
+
+
                     
+                    ndq += 1
+                    selected_game = random.choice(menu)
+                    xp_gained = 0
+                    score = False
                     if selected_game == "ScNat":
-                        exercise = ScNat()
-                        score, xp, streak = exercise.menu_scnat(choices_scnat, question_num)
+                        exercise_score, xp, streak = ci.matiere(link.get_scnat(), choices_scnat, player, ndq, score)
                     elif selected_game == "Francais":
-                        exercise = Francais()
-                        score, xp, streak = exercise.menu_francais(choices_francais, question_num)
+                        exercise_score, xp, streak = ci.matiere(link.get_francais(), choices_francais, player, ndq, score)
                     elif selected_game == "Deutsch":
-                        exercise = Deutsch()
-                        score, xp, streak = exercise.menu_deutsch(choices_deutsch, question_num)
+                        exercise_score, xp, streak = ci.matiere(link.get_deutsch(), choices_deutsch, player, ndq, score)
                     elif selected_game == "Anglais":
-                        exercise = Anglais()
-                        score, xp, streak = exercise.menu_anglais(choices_anglais, question_num)
+                        exercise_score, xp, streak = ci.matiere(link.get_anglais(), choices_anglais, player, ndq, score)
                     elif selected_game == "Math":
-                        exercise = Math()
-                        score, xp, streak = exercise.menu_math(choices_math, question_num)
+                        exercise_score, xp, streak = ci.matiere(link.get_math(), choices_math, player, ndq, score)
                     elif selected_game == "Geo":
-                        exercise = Geo()
-                        score, xp, streak = exercise.menu_geo(choices_geo, question_num)
+                        exercise_score, xp, streak = ci.matiere(link.get_geo(), choices_geo, player, ndq, score)
                     elif selected_game == "Histo":
-                        exercise = Histo()
-                        score, xp, streak = exercise.menu_histo(choices_histo, question_num)
+                        exercise_score, xp, streak = ci.matiere(link.get_histo(), choices_histo, player, ndq, score)
                     else:
                         print("Game selection error.")
                         streak = False
                     
-                    if exercise_score == True:
-                        score += 1
-                    elif exercise_score == None or exercise_score == False:
-                        score = score
-                    if xp == True:
-                        XP += 50
-                    elif xp == False:
-                        XP -= 50
                     if streak == True or streak == None:
                         streak = True
                     else:
@@ -318,57 +283,44 @@ while running:
                 attempts = 5
                 max_attempts = attempts
                 score = 0
-                question_num = 0
+                ndq = 0
 
-                question_num = controller_int(attempts, max_attempts, question_num, "How many questions do you want?")
-                total_questions = question_num
+                ndq = controller_int(attempts, max_attempts, ndq, "How many questions do you want?")
+                total_questions = ndq
                 
-                for i in range(question_num):
+                for i in range(ndq):
                     selected_game = random.choice(menu)
                     
                     if selected_game == "ScNat":
-                        exercise = ScNat()
-                        exercise_score, xp, streak = exercise.menu_scnat(choices_scnat, (i + 1))
+                        exercise_score, xp, streak = ci.matiere(link.get_scnat(), choices_scnat, player, i, score)
                     elif selected_game == "Francais":
-                        exercise = Francais()
-                        exercise_score, xp, streak = exercise.menu_francais(choices_francais, (i + 1))
+                        exercise_score, xp, streak = ci.matiere(link.get_francais(), choices_francais, player, i, score)
                     elif selected_game == "Deutsch":
-                        exercise = Deutsch()
-                        exercise_score, xp, streak = exercise.menu_deutsch(choices_deutsch, (i + 1))
+                        exercise_score, xp, streak = ci.matiere(link.get_deutsch(), choices_deutsch, player, i, score)
                     elif selected_game == "Anglais":
-                        exercise = Anglais()
-                        exercise_score, xp, streak = exercise.menu_anglais(choices_anglais, (i + 1))
+                        exercise_score, xp, streak = ci.matiere(link.get_anglais(), choices_anglais, player, i, score)
                     elif selected_game == "Math":
-                        exercise = Math()
-                        exercise_score, xp, streak = exercise.menu_math(choices_math, (i + 1))
+                        exercise_score, xp, streak = ci.matiere(link.get_math(), choices_math, player, i, score)
                     elif selected_game == "Geo":
-                        exercise = Geo()
-                        exercise_score, xp, streak = exercise.menu_geo(choices_geo, (i + 1))
+                        exercise_score, xp, streak = ci.matiere(link.get_geo(), choices_geo, player, i, score)
+                    elif selected_game == "Histo":
+                        exercise_score, xp, streak = ci.matiere(link.get_histo(), choices_histo, player, i, score)
                     else:
                         print("Game selection error.")
                         streak = False
                     
-                    if exercise_score == True:
-                        score += 1
-                    elif exercise_score == None or exercise_score == False:
-                        score = score
-                    if xp == True:
-                        XP += 50
-                    elif xp == False:
-                        XP -= 50
                     if streak == True or streak == None:
                         streak = True
                     else:
                         streak = False
 
-
                     s.Level_up(player)
                     s.sauvegarder_auto(data)
-                    if i < question_num - 1:
+                    if i < ndq - 1:
                         input("Press ENTER to continue...")
                     os.system('cls' if os.name == 'nt' else 'clear')
                 
-                percentage = calculate_percentage(score, question_num)
+                percentage = calculate_percentage(score, ndq)
                 input(f"Your result:\nScore: {score}\nSuccess percentage: {percentage}%\nPress ENTER to continue...")
 
         # =======================================
@@ -458,3 +410,4 @@ while running:
         else:
             print("Invalid choice.")
             input("Press ENTER to continue...")
+

@@ -67,29 +67,3 @@ def langue(nom, joueur, v, boutton_state):
         La = DE
     else:
         La = EN  # Par défaut: Français
-
-    # Formatage final
-    return {k: v.format(
-        name = nom if nom else "Guest",
-        langue = joueur["P"]["langue"],
-        v = v,
-        scnat = "ON" if scnat else "OFF",
-        scnat_1 = "ON" if scnat_1 else "OFF",
-        scnat_2 = "ON" if scnat_2 else "OFF",
-        francais = "ON" if francais else "OFF",
-        francais_1 = "ON" if francais_1 else "OFF",
-        francais_2 = "ON" if francais_2 else "OFF",
-        deutsch = "ON" if deutsch else "OFF",
-        deutsch_1 = "ON" if deutsch_1 else "OFF",
-        deutsch_2 = "ON" if deutsch_2 else "OFF",
-        anglais = "ON" if anglais else "OFF",
-        anglais_1 = "ON" if anglais_1 else "OFF",
-        anglais_2 = "ON" if anglais_2 else "OFF",
-        math = "ON" if math else "OFF",
-        math_1 = "ON" if math_1 else "OFF",
-        geo = "ON" if geo else "OFF",
-        geo_1 = "ON" if geo_1 else "OFF",
-        Histo = "ON" if Histo else "OFF",
-        Histo_1 = "ON" if Histo_1 else "OFF",
-        Histo_2 = "ON" if Histo_2 else "OFF"
-    ) for k, v in La.items()}
