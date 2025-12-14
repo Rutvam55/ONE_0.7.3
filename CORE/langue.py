@@ -1,69 +1,105 @@
-def langue(nom, joueur, v, boutton_state):  
-    scnat = boutton_state["1"]
-    scnat_1 = boutton_state["1_1"]
-    scnat_2 = boutton_state["1_2"]
-    
-    francais = boutton_state["2"]
-    francais_1 = boutton_state["2_1"]
-    francais_2 = boutton_state["2_2"]
-    
-    deutsch = boutton_state["3"]
-    deutsch_1 = boutton_state["3_1"]
-    deutsch_2 = boutton_state["3_2"]
-    
-    anglais = boutton_state["4"]
-    anglais_1 = boutton_state["4_1"]
-    anglais_2 = boutton_state["4_2"]
-    
-    math = boutton_state["5"]
-    math_1 = boutton_state["5_1"]
-    
-    geo = boutton_state["6"]
-    geo_1 = boutton_state["6_1"]
-    
-    Histo = boutton_state["7"]
-    Histo_1 = boutton_state["7_1"]
-    Histo_2 = boutton_state["7_2"]
-
-    FR = {
-        "main.1.p": "Bienvenue, {name} !\nTu veux faire quoi?",
-        "main.2.i": "1. Entrainemant\n2. INL\nP. Parametre\n>\t",
-        "main.3.i": "__PARAMETRE__\n1. Langue: {langue}\n2. v: {v}\n>\t",
-        "main.4.p": "Appuie sur Entrée pour lancer le quiz avec les modes sélectionnés.",
-        "main.5.i": ">\t",
-        "main.6.p": "Erreur : aucun mode sélectionné. Sélectionnez au moins un mode.",
-        "main.7.p": "1. ScNat ({scnat})",
-        "main.8.p": "\t1.1. Nom des elemente ({scnat_1})"
+def langue():  
+    LA = {
+        "Welcome": {
+            "EN": "Welcome",
+            "FR": "Bienvenue",
+            "DE": "Willkommen"
+        },"What would you like to do": {
+            "EN": "What would you like to do",
+            "FR": "Tu veux faire quoi",
+            "DE": "Was wollen sie machen"
+        },"Training": {
+            "EN": "Training",
+            "FR": "Entrainemant",
+            "DE": "Aufgaben"
+        },"Setting": {
+            "EN": "Setting",
+            "FR": "Parametre",
+            "DE": "Einstellung"
+        },"Language": {
+            "EN": "Language",
+            "FR": "Langue",
+            "DE": "Sprache"
+        },"Press of Enter to start the quiz with selected modes.": {
+            "EN": "Press of Enter to start the quiz with selected modes.",
+            "FR": "Appuie sur Entrée pour lancer le quiz avec les modes sélectionnés.",
+            "DE": "Drücken Sie die Eingabetaste, um das Quiz mit den ausgewählten Modi zu starten."
+        },"!!! ERROR !!!\nNo mode selected\n*restart": {
+            "EN": "!!! ERROR !!!\nNo mode selected\n*restart",
+            "FR": "!!! ERREUR !!!\nAucun mode sélectionné.\n*redémarrer",
+            "DE": "!!! FEHLER !!!\nWehlen sie einen modus\n*NEUSTART"
+        },"Natural Sciences": {
+            "EN": "Natural Sciences",
+            "FR": "Sciences naturelles",
+            "DE": "Naturwissenschaften"
+        },"Name of the elements": {
+            "EN": "Name of the elements",
+            "FR": "Nom des elemente",
+            "DE": "Name der elemente"
+        },"Atomic number": {
+            "EN": "Atomic number",
+            "FR": "Numéro atomique",
+            "DE": "Ordnungszahl"
+        },"French": {
+            "EN": "French",
+            "FR": "Français",
+            "DE": "Französisch"
+        },"Vocabulary": {
+            "EN": "Vocabulary",
+            "FR": "Vocabulaire",
+            "DE": "Wortschatz"
+        },"Conjugation": {
+            "EN": "Conjugation",
+            "FR": "Conjugaison",
+            "DE": "Konjugation"
+        },"German": {
+            "EN": "German",
+            "FR": "Allemand",
+            "DE": "Deutsch"
+        },"Features of short stories (Easy)": {
+            "EN": "Features of short stories (Easy)",
+            "FR": "Caractéristiques des histoir court (Facile)",
+            "DE": "Merkmale von Kurzgeschichten (Einfach)"
+        },"Features of short stories (Hard)": {
+            "EN": "Features of short stories (Hard)",
+            "FR": "Caractéristiques des histoir court (Difficile)",
+            "DE": "Merkmale von Kurzgeschichten (Schwer)"
+        },"English": {
+            "EN": "English",
+            "FR": "Anglais",
+            "DE": "Englisch"
+        },"Easy vocabulary": {
+            "EN": "Easy vocabulary",
+            "FR": "Vocabulaire facile",
+            "DE": "Einfacher Wortschatz"
+        },"Impossible vocabulary": {
+            "EN": "Impossible vocabulary",
+            "FR": "Vocabulaire impossible",
+            "DE": "Unmöglicher Wortschatz"
+        },"Math": {
+            "EN": "Math",
+            "FR": "Math",
+            "DE": "Mathe"
+        },"The Basics (+ - x ÷)": {
+            "EN": "The Basics (+ - x ÷)",
+            "FR": "Les base (+ - x ÷)",
+            "DE": "Die Grundlagen (+ - x ÷)"
+        },"Geography": {
+            "EN": "Geography",
+            "FR": "Géographie",
+            "DE": "Geographie"
+        },"Plate tectonics theory": {
+            "EN": "Plate tectonics theory",
+            "FR": "Theorie des plaque tektonique",
+            "DE": "Plattentektoniktheorie"
+        },"History": {
+            "EN": "History",
+            "FR": "Histoire",
+            "DE": "Geschichte"
+        },"Industrialization": {
+            "EN": "Industrialization",
+            "FR": "L'industrialisation",
+            "DE": "Die Industrialisierung"
+        },
     }
-
-    EN = {
-        "main.1.p": "Welcome, {name}!\nWhat would you like to do?",
-        "main.2.i": "1. Training\nS. Setting\n>\t",
-        "main.3.i": "__SETTING__\n1. Language: {langue}\n2. v: {v}",
-        "main.4.p": "Press of Enter to start the game.",
-        "main.5.i": "Enter your answer (tape 1-5 or (1.2 5.1)): ",
-        "main.6.p": "!!! ERROR !!!\n*restart",
-        "main.7.p": "1. ScNat ({scnat})",
-        "main.8.p": "\t1.1. Name of the elemente ({scnat_1})"
-    }
-
-    DE = {
-        "main.1.p": "Willkommen, {name}!\nWas wollen sie machen?",
-        "main.2.i": "1. Aufgaben\nS. Einstellung",
-        "main.3.i": "__EINSTELLUNG__\n1. Sprache: {langue}\n2. v: {v}",
-        "main.4.p": "Um zu Starten, drucken sie auf Enter.",
-        "main.5.i": "Geben sie ihre antwort (tape 1-5 or (1.2 5.1)): ",
-        "main.6.p": "!!! FEHLER !!!\n*NEUSTART",
-        "main.7.p": "1. ScNat ({scnat})",
-        "main.8.p": "\t1.1. Name der elemente ({scnat_1})"
-    }
-
-    langue_actuelle = joueur["P"]["langue"]
-    if langue_actuelle == "EN":
-        La = EN
-    elif langue_actuelle == "FR":
-        La = FR
-    elif langue_actuelle == "DE":
-        La = DE
-    else:
-        La = EN  # Par défaut: Français
+    return LA

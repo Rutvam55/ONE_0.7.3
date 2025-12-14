@@ -7,6 +7,8 @@ Fichier principal qui gère :
 - intégration IA (INLL)
 
 Ce script est prévu pour être exécuté en console.
+
+python .\main.py
 """
 
 import os
@@ -27,7 +29,7 @@ ci = link.get_ci()
 Data_Loader = link.get_data_loader()
 ia = link.get_ia()
 
-VERSION = "1.0.0"
+VERSION = "0.10.1"
 
 def calculate_percentage(correct_answers, total_questions):
     """Calculate percentage of correct answers"""
@@ -51,21 +53,21 @@ while running:
     # =================================
     while not connection:
         os.system("cls" if os.name == "nt" else "clear")
-        print(couleurs.text_editor("=== ONE ===", police = "FAT", text_color = "DEFAULT", background_color = "DEFAULT"))
+        print(ci.TEXT.text_editor("=== ONE ===", police = "FAT", text_color = "DEFAULT", background_color = "DEFAULT"))
         password_correct = False
         attempts = 3
 
         if attempts == 0 and password_correct is False:
-            print("Too many incorrect attempts. Exiting.")
+            print("Too many incorrect attempts. Exiting...")
             exit()
 
-        username = input(couleurs.text_editor("Enter your name.\n>\t", police = "UNDERLINE", text_color = "DEFAULT", background_color = "DEFAULT"))
+        username = input(ci.TEXT.text_editor("Enter your name.\n>\t", police = "UNDERLINE", text_color = "DEFAULT", background_color = "DEFAULT"))
         if not username:
             print("Username cannot be empty.")
             input("Press ENTER to continue...")
             continue
             
-        password = pwinput.pwinput(prompt = couleurs.text_editor("Enter your password.\n>\t", police = "UNDERLINE", text_color = "DEFAULT", background_color = "DEFAULT"), mask='#')
+        password = pwinput.pwinput(prompt = ci.TEXT.text_editor("Enter your password.\n>\t", police = "UNDERLINE", text_color = "DEFAULT", background_color = "DEFAULT"), mask='#')
         if not password:
             print("Password cannot be empty.")
             input("Press ENTER to continue...")
@@ -74,7 +76,7 @@ while running:
         player, password_correct = s.selectionner_joueur(data, username, password)
         while True:
             if player is None:
-                create = input(couleurs.text_editor("Player not found.\nCreate one? (Y/N)\n>\t", police = "DIM", text_color = "RED", background_color = "DEFAULT")).lower()
+                create = input(ci.TEXT.text_editor("Player not found.\nCreate one? (Y/N)\n>\t", police = "DIM", text_color = "RED", background_color = "DEFAULT")).lower()
 
                 if create in ["y", "oui", "yes", "ja"]:
                     if s.ajouter_joueur(data, username, password):
@@ -106,19 +108,19 @@ while running:
         set_player(player)
 
     # ===============================
-    #       LANGUAGE
-    # ===============================
-    L = langue(username, player, VERSION, buttons.state)
-
-
-
-    # ===============================
     #       MAIN MENU
     # ===============================
     while True:
+        os.system("cls" if os.name == "nt" else "clear")
+        # ===============================
+        #       LANGUAGE
+        # ===============================
+        Lang = link.langue()
+        # `Lang["main.1.p"]` est déjà une chaîne localisée; on la formate avec le nom
+        print(ci.TEXT.text_editor(text = f"{Lang["Welcome"][player["P"]["langue"]]}!\n{Lang["What would you like to do"][player["P"]["langue"]]}?", police = "FAT", text_color = "DEFAULT", background_color = "DEFAULT"))
+        choice = ci.INPUT.input_2c(text = ci.TEXT.text_editor(text = f"1. {Lang["Training"][player["P"]["langue"]]}\n2. INLL\nS. {Lang["Setting"][player["P"]["langue"]]}", police = "NONE", text_color = "DEFAULT", background_color = "DEFAULT"), c1 = "q", c2 = "h").strip().lower()
 
-        print(L["main.1.p"])
-        choice = input(L["main.2.i"]).strip()
+
 
         # =======================================
         #         SETTINGS
@@ -127,56 +129,56 @@ while running:
 
             while True:
                 os.system("cls" if os.name == "nt" else "clear")
-                print("=========== SETTINGS ===========")
+                print(f"=========== {Lang['Setting'][player["P"]["langue"]]} ===========")
 
                 def show(btn, txt):
                     """Show button state"""
                     boole = "ON" if buttons.state[btn] else "OFF"
                     if boole == "ON":
-                        state = couleurs.text_editor("ON", police = "FAT", text_color = "GREEN", background_color = "DEFAULT")
+                        state = ci.TEXT.text_editor("ON", police = "FAT", text_color = "GREEN", background_color = "DEFAULT")
                     else:
-                        state = couleurs.text_editor("OFF", police = "FAT", text_color = "RED", background_color = "DEFAULT")
+                        state = ci.TEXT.text_editor("OFF", police = "FAT", text_color = "RED", background_color = "DEFAULT")
                     print(f"({state}) {txt} ")
                     return boole
 
-                state = show("1", "1. Sciens Naturelle")
+                state = show("1", ("1" + Lang["Natural Sciences"][player['P']['langue']]))
                 if state == "ON":
-                    _ = show("1_1", "\t1.1 Element Namen")
-                    _ = show("1_2", "\t1.2 Ordnungszahl")
+                    _ = show("1_1", ("1.1" + Lang["Name of the elements"][player['P']['langue']]))
+                    _ = show("1_2", ("1.2" + Lang["Atomic number"][player['P']['langue']]))
                     print("")
 
-                state = show("2", "2. Francais")
+                state = show("2", ("2 " + Lang["French"][player['P']['langue']]))
                 if state == "ON":
-                    _ = show("2_1", "\t2.1 Vocabulary (difficult)")
-                    _ = show("2_2", "\t2.2 Verbs")
+                    _ = show("2_1", ("\t2.1 " + Lang["Vocabulary"][player['P']['langue']]))
+                    _ = show("2_2", ("\t2.2 " + Lang["Conjugation"][player['P']['langue']]))
                     print("")
 
-                state = show("3", "3. Deutsch")
+                state = show("3", ("3 " + Lang["German"][player['P']['langue']]))
                 if state == "ON":
-                    _ = show("3_1", "\t3.1 Kurzgeschichten (easy)")
-                    _ = show("3_2", "\t3.2 Kurzgeschichten (hard)")
+                    _ = show("3_1", ("\t3.1" + Lang["Features of short stories (Easy)"][player['P']['langue']]))
+                    _ = show("3_2", ("\t3.2 " + Lang["Features of short stories (Hard)"][player['P']['langue']]))
                     print("")
 
-                state = show("4", "4. Anglais")
+                state = show("4", ("4 " + Lang["English"][player['P']['langue']]))
                 if state == "ON":
-                    _ = show("4_1", "\t4.1 Easy vocabulary")
-                    _ = show("4_2", "\t4.2 Impossible vocabulary")
+                    _ = show("4_1", ("\t4.1 " + Lang["Easy vocabulary"][player['P']['langue']]))
+                    _ = show("4_2", ("\t4.2 " + Lang["Impossible vocabulary"][player['P']['langue']]))
                     print("")
 
-                state = show("5", "5. Math")
+                state = show("5", ("5 " + Lang["Math"][player['P']['langue']]))
                 if state == "ON":
-                    _ = show("5_1", "\t5.1 Base")
+                    _ = show("5_1", ("\t5.1 " + Lang["The Basics (+ - x ÷)"][player['P']['langue']]))
                     print("")
 
-                state = show("6", "6. Geography")
+                state = show("6", ("6 " + Lang["Geography"][player['P']['langue']]))
                 if state == "ON":
-                    _ = show("6_1", "\t6.1 les plaque tektonique")
+                    _ = show("6_1", ("\t6.1 " + Lang["Plate tectonics theory"][player['P']['langue']]))
                     print("")
 
-                state = show("7", "7. History")
+                state = show("7", ("7 " + Lang["History"][player['P']['langue']]))
                 if state == "ON":
-                    _ = show("7_1", "\t7.1 Theorie der platten tektonik")
-                    _ = show("7_2", "\t7.2 Induastrialisierung")
+                    _ = show("7_1", ("\t7.1 " + Lang["Plate tectonics theory"][player['P']['langue']]))
+                    _ = show("7_2", ("\t7.2 " + Lang["Industrialization"][player['P']['langue']]))
                     print("")
                 print("=" * 40)
                 action = input("\nq: Quit\nENTER to validate, or choose a button.\n>\t").strip()
@@ -372,7 +374,7 @@ while running:
         # =======================================
         #         SETTINGS (Player)
         # =======================================
-        elif choice.lower() == "s" or choice.lower() == "p":
+        elif choice == "s" or choice == "p":
             os.system("cls" if os.name == "nt" else "clear")
             settings_choice = input("What do you want to do?\n1. Change language\n> ").strip()
             
@@ -397,12 +399,12 @@ while running:
                     print(f"Error: {e}")
                 
                 input("Press ENTER to continue...")
-                s.sauvegarder_auto(data, )
+                s.sauvegarder_auto(data)
 
         # =======================================
         #         QUIT GAME
         # =======================================
-        elif choice.lower() == "q":
+        elif choice == "q":
             print("Goodbye!")
             running = False
             break

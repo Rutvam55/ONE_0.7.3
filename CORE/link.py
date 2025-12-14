@@ -1,6 +1,6 @@
 import random
 import os
-from CORE.input_v import CI
+from CORE.ci import CI
 from CORE.dataloader import DataLoader
 from CORE.exercise import Exercise
 from CORE.funk import sauvegarde, controller_int
