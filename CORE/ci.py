@@ -47,7 +47,8 @@ class CI:
 
         Returns: (exercise_score, xp, streak)
         """
-        # determine method name from class name, e.g., Anglais -> menu_anglais
+
+        # determine method name from class name, e.g., language -> menu_language
         method_name = f"menu_{exercise.__class__.__name__.lower()}"
         if not hasattr(exercise, method_name):
             raise AttributeError(f"Exercise object has no method {method_name}")
@@ -62,6 +63,7 @@ class CI:
             link.get_sauvegarde().ajouter_xp(player, exercise.__class__.__name__, 50, True)
 
         return exercise_score, xp, streak
+    
     class INPUT:
         def quit(self, answer):
             if answer.lower() in ["exit", "quitter", "quit", "q", "e"]:

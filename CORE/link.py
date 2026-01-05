@@ -8,9 +8,7 @@ from CORE.player import Player
 from CORE.button import Button
 from CORE.langue import langue
 from CORE.couleur import Couleur
-from MATIERE.ANGLAIS.anglais import Anglais
-from MATIERE.DEUTSCH.deutsch import Deutsch
-from MATIERE.FRANCAIS.francais import Francais
+from MATIERE.LANGUE.langue import Language
 from MATIERE.GEO.geo import Geo
 from MATIERE.MATH.math import Math
 from MATIERE.SCNAT.scnat import ScNat
@@ -31,9 +29,7 @@ def set_player(p):
 ci = None
 Data_Loader = None
 Ex = None
-Ang = None
-Deu = None
-Fra = None
+Lan = None
 Geog = None
 Mat = None
 Scn = None
@@ -64,27 +60,11 @@ def get_exercise():
         Ex = Exercise()
     return Ex
 
-
-def get_anglais():
-    global Ang
-    if Ang is None:
-        Ang = Anglais()
-    return Ang
-
-
-def get_deutsch():
-    global Deu
-    if Deu is None:
-        Deu = Deutsch()
-    return Deu
-
-
-def get_francais():
-    global Fra
-    if Fra is None:
-        Fra = Francais()
-    return Fra
-
+def get_langue():
+    global Lan
+    if Lan is None:
+        Lan = Language()
+    return Lan
 
 def get_geo():
     global Geog

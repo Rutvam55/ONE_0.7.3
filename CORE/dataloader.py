@@ -17,11 +17,11 @@ class DataLoader:
     def load_data(subject):
         """Load data according to the specified subject"""
         if subject == "EN":
-            return DataLoader._load_english()
+            return DataLoader._load_language()
         elif subject == "FR":
-            return DataLoader._load_french()
+            return DataLoader._load_language()
         elif subject == "DE":
-            return DataLoader._load_german()
+            return DataLoader._load_language()
         elif subject == "ScNat":
             return DataLoader._load_scnat()
         elif subject == "Math":
@@ -34,22 +34,7 @@ class DataLoader:
             return DataLoader._load_color()
 
     @staticmethod
-    def _load_english():
-        """Load English vocabulary data"""
-        try:
-            file_path = DataLoader.get_path('MATIERE/ANGLAIS/anglais_voc1.json')
-            with open(file_path, 'r', encoding=DataLoader.ENCODING) as f:
-                data = json.load(f)
-                return data.get("anglais_voc1", {})
-        except FileNotFoundError:
-            print("Error: English data file not found.")
-            return {}
-        except json.JSONDecodeError:
-            print("Error: Invalid JSON format in English data file.")
-            return {}
-
-    @staticmethod
-    def _load_french():
+    def _load_language():
         """Load French vocabulary and verb data"""
         vocabulary = {}
         persons = []
@@ -57,10 +42,10 @@ class DataLoader:
         verb_data = {}
 
         try:
-            file_path = DataLoader.get_path('MATIERE/FRANCAIS/francais.json')
+            file_path = DataLoader.get_path('MATIERE/LANGUE/voc.json')
             with open(file_path, 'r', encoding=DataLoader.ENCODING) as f:
                 data = json.load(f)
-                vocabulary = data.get("francais_voc", {})
+                vocabulary = data.get("voc", {})
         except FileNotFoundError:
             print("Error: French vocabulary file not found.")
         except json.JSONDecodeError:
@@ -78,21 +63,6 @@ class DataLoader:
             print("Error: Invalid JSON format in French verb file.")
 
         return vocabulary, persons, agreement, verb_data
-
-    @staticmethod
-    def _load_german():
-        """Load German vocabulary data"""
-        try:
-            file_path = DataLoader.get_path('MATIERE/DEUTSCH/deutsch.json')
-            with open(file_path, 'r', encoding=DataLoader.ENCODING) as f:
-                data = json.load(f)
-                return data.get("merkmale_von_Kurzgeschichten", [])
-        except FileNotFoundError:
-            print("Error: German data file not found.")
-            return []
-        except json.JSONDecodeError:
-            print("Error: Invalid JSON format in German data file.")
-            return []
 
     @staticmethod
     def _load_scnat():

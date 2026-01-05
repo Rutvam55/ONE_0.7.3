@@ -1,5 +1,5 @@
 {
-    "anglais_voc1": {
+    "voc": {
         "afraid": {
             "EN": "afraid",
             "FR": "peur",
@@ -8,35 +8,143 @@
         "afternoon": {
             "EN": "afternoon",
             "FR": "après-midi",
-            "DE": "?"
+            "DE": "nachmittag"
         },
-        "again": "à nouveau",
-        "age": "âge",
-        "agree": "être d'accord",
-        "air": "air",
-        "airplane": "avion",
-        "album": "album",
-        "alcohol": "alcool",
-        "all": "tout",
-        "allergy": "allergie",
-        "allow": "permettre",
-        "almost": "presque",
-        "alone": "seul",
-        "along": "le long",
-        "already": "déjà",
-        "also": "aussi",
-        "always": "toujours",
-        "amazing": "incroyable",
-        "ambition": "ambition",
-        "america": "Amérique",
-        "american": "américain",
-        "among": "parmi",
-        "amount": "montant",
-        "amusement": "amusement",
-        "anchor": "ancre",
-        "ancient": "ancien",
-        "and": "et",
-        "angel": "ange",
+        "again": {
+            "EN": "again",
+            "FR": "encore",
+            "DE": "wieder"
+        },
+        "age": {
+            "EN": "age",
+            "FR": "âge",
+            "DE": "alter"
+        },
+        "agree": {
+            "EN": "agree",
+            "FR": "être d'accord",
+            "DE": "zustimmen"
+        },
+        "air": {
+            "EN": "air",
+            "FR": "air",
+            "DE": "luft"
+        },
+        "airplane": {
+            "EN": "airplane",
+            "FR": "avion",
+            "DE": "Flugzeug"
+        },
+        "album": {
+            "EN": "album",
+            "FR": "album",
+            "DE": "album"
+        },
+        "alcohol": {
+            "EN": "alcohol",
+            "FR": "alcool",
+            "DE": "alkohol"
+        },
+        "all": {
+            "EN": "all",
+            "FR": "tout",
+            "DE": "alle"
+        },
+        "allergy": {
+            "EN": "allergy",
+            "FR": "allergie",
+            "DE": "allergie"
+        },
+        "allow": {
+            "EN": "allow",
+            "FR": "permettre",
+            "DE": "erlauben"
+        },
+        "almost": {
+            "EN": "almost",
+            "FR": "presque",
+            "DE": "fast"
+        },
+        "alone": {
+            "EN": "alone",
+            "FR": "seul",
+            "DE": "allein"
+        },
+        "along": {
+            "EN": "along",
+            "FR": "le long",
+            "DE": ""
+        },
+        "already": {
+            "EN": "already",
+            "FR": "déjà",
+            "DE": ""
+        },
+        "also": {
+            "EN": "also",
+            "FR": "aussi",
+            "DE": ""
+        },
+        "always": {
+            "EN": "",
+            "FR": "",
+            "DE": ""
+        },
+        "amazing": {
+            "EN": "amazing",
+            "FR": "incroyable",
+            "DE": ""
+        },
+        "ambition": {
+            "EN": "ambition",
+            "FR": "ambition",
+            "DE": ""
+        },
+        "america": {
+            "EN": "",
+            "FR": "Amérique",
+            "DE": ""
+        },
+        "american": {
+            "EN": "american",
+            "FR": "américain",
+            "DE": ""
+        },
+        "among": {
+            "EN": "among",
+            "FR": "parmi",
+            "DE": ""
+        },
+        "amount": {
+            "EN": "amount",
+            "FR": "montant",
+            "DE": ""
+        },
+        "amusement": {
+            "EN": "amusement",
+            "FR": "amusement",
+            "DE": ""
+        },
+        "anchor": {
+            "EN": "anchor",
+            "FR": "ancre",
+            "DE": ""
+        },
+        "ancient": {
+            "EN": "ancient",
+            "FR": "ancien",
+            "DE": ""
+        },
+        "and": {
+            "EN": "",
+            "FR": "",
+            "DE": ""
+        },
+        "angel": {
+            "EN": "",
+            "FR": "",
+            "DE": ""
+        },
         "anger": "colère",
         "angle": "angle",
         "angry": "fâché",

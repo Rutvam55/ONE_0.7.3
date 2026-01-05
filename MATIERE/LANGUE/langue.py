@@ -1,53 +1,74 @@
 import random
+import CORE.link as link
 from CORE.exercise import Exercise
 from CORE.dataloader import DataLoader
+try:
+    from main import choices_langue
+except:
+    print("ERROR: the import of choices langue from main.py")
+
 # player sera récupéré dynamiquement depuis CORE.link pour éviter import circulaire
 
-class Francais(Exercise):
+class Language(Exercise):
     """French exercises"""
 
     def menu_francais(self, choices, question_num):
-        """Main menu for French exercises"""
-        if choices == "French"
-        vocabulary, persons, agreement, verb_data = DataLoader.load_data("FR")
-        import CORE.link as link
+        """Main menu for exercises"""
         player = link.player
-
-        stats = {
-            'xp': player.get('Francais', {}).get('xp_Francais', 0),
-            'level': player.get('Francais', {}).get('Level_Francais', 1),
-            'exercises': player.get('Francais', {}).get('parties_jouees_Francais', 0)
-        }
-        self.display_header(question_num, "French", stats)
-
+        if choices == "French":
+            stats = {
+                'xp': player.get('Francais', {}).get('xp_Francais', 0),
+                'level': player.get('Francais', {}).get('Level_Francais', 1),
+                'exercises': player.get('Francais', {}).get('parties_jouees_Francais', 0)
+            }
+            vocabulary, persons, agreement, verb_data = DataLoader.load_data("FR")
+            self.display_header(question_num, "French", stats)
+        elif choices == "German":
+            stats = {
+                'xp': player.get('Deutsch', {}).get('xp_Deutsch', 0),
+                'level': player.get('Deutsch', {}).get('Level_Deutsch', 1),
+                'exercises': player.get('Deutsch', {}).get('parties_jouees_Deutsch', 0)
+            }
+            vocabulary, persons, agreement, verb_data = DataLoader.load_data("DE")
+            self.display_header(question_num, "German", stats)
+        else:
+            stats = {
+                'xp': player.get('Anglais', {}).get('xp_Anglais', 0),
+                'level': player.get('Anglais', {}).get('Level_Anglais', 1),
+                'exercises': player.get('Anglais', {}).get('parties_jouees_Anglais', 0)
+            }
+            vocabulary, persons, agreement, verb_data = DataLoader.load_data("EN")
+            self.display_header(question_num, "English", stats)
+        
         if not choices:
-            print("❌ No choices provided for French.")
+            print(f"❌ No choices provided for {choices}.")
             return self.score, self.xp, self.streak
 
-        choice = random.choice(choices)
+        choice_ex = random.choice(choices_langue)
 
-        if choice == "voc dif":
-            self._exercise_vocabulary(vocabulary)
-        elif choice == "verb":
+        if choice_ex == "Vocabulary":
+            # rentrer
+            self._exercise_vocabulary(vocabulary, choices)
+        elif choice_ex == "Conjugation":
             self._exercise_verbs(verb_data, persons)
         else:
-            print(f"❌ Unknown French choice: {choice}")
+            print(f"❌ Unknown French choice: {choice_ex}")
 
         return self.score, self.xp, self.streak
 
-    def _exercise_vocabulary(self, vocabulary):
-        """French vocabulary exercise"""
+    def _exercise_vocabulary(self, vocabulary, choises):
+        """vocabulary exercise"""
         if not vocabulary:
             print("❌ No vocabulary data available.")
             return
 
         translation, word = random.choice(list(vocabulary.items()))
-        answer = input(f"How do you say '{word}' in French?\nEnter your answer: ").strip()
+        answer = input(f"How do you say '{word}' in {choises}?\n>> ").strip()
         
         self.check_answer(answer, translation)
 
     def _exercise_verbs(self, verb_data, persons):
-        """French verb conjugation exercise"""
+        """verb conjugation exercise"""
         if not verb_data.get("verbs", {}).get("list") or not persons:
             print("❌ No verb or person data available.")
             return
@@ -58,7 +79,7 @@ class Francais(Exercise):
         self.check_answer(answer, correct_answer)
 
     def _conjugate_verb(self, verb, persons, verb_data):
-        """Conjugate a French verb"""
+        """Conjugate a verb"""
         subject = random.choice(persons)
         tense = random.choice(["présent", "passé composé", "imparfait", "plus-que-parfait"])
         answer = input(f"Conjugate '{verb}' at {tense}:\n> {subject} ").strip()

@@ -15,6 +15,7 @@ import os
 import pwinput
 import random
 import CORE.link as link
+import ctypes
 
 # helpers et singletons récupérés via getters pour éviter effets de bord à l'import
 set_player = link.set_player
@@ -30,12 +31,17 @@ Data_Loader = link.get_data_loader()
 ia = link.get_ia()
 
 VERSION = "0.10.1"
+test = True
 
-def calculate_percentage(correct_answers, total_questions):
-    """Calculate percentage of correct answers"""
-    return (correct_answers / total_questions) * 100 if total_questions > 0 else 0
+lib = ctypes.CDLL(os.path.join(os.path.dirname(__file__), 'calcule.dll'))
+lib.calculate_percentage.argtypes = [ctypes.c_int, ctypes.c_int]
+lib.calculate_percentage.restype = ctypes.c_double
 
-
+if test == True:
+    info = {
+        "name": "Test",
+        "key_word": "12345"
+    }
 
 # ===============================
 #       MAIN PROGRAM
@@ -61,13 +67,19 @@ while running:
             print("Too many incorrect attempts. Exiting...")
             exit()
 
-        username = input(ci.TEXT.text_editor("Enter your name.\n>\t", police = "UNDERLINE", text_color = "DEFAULT", background_color = "DEFAULT"))
+        if not test:
+            username = input(ci.TEXT.text_editor("Enter your name.\n>\t", police = "UNDERLINE", text_color = "DEFAULT", background_color = "DEFAULT"))
+        else:
+            username = info["name"]
+
         if not username:
             print("Username cannot be empty.")
             input("Press ENTER to continue...")
             continue
-            
-        password = pwinput.pwinput(prompt = ci.TEXT.text_editor("Enter your password.\n>\t", police = "UNDERLINE", text_color = "DEFAULT", background_color = "DEFAULT"), mask='#')
+        if not test:
+            password = pwinput.pwinput(prompt = ci.TEXT.text_editor("Enter your password.\n>\t", police = "UNDERLINE", text_color = "DEFAULT", background_color = "DEFAULT"), mask='#')
+        else:
+            password = info["key_word"]
         if not password:
             print("Password cannot be empty.")
             input("Press ENTER to continue...")
@@ -116,11 +128,11 @@ while running:
         #       LANGUAGE
         # ===============================
         Lang = link.langue()
+        language = player['P']['langue']
         # `Lang["main.1.p"]` est déjà une chaîne localisée; on la formate avec le nom
-        print(ci.TEXT.text_editor(text = f"{Lang["Welcome"][player["P"]["langue"]]}!\n{Lang["What would you like to do"][player["P"]["langue"]]}?", police = "FAT", text_color = "DEFAULT", background_color = "DEFAULT"))
-        choice = ci.INPUT.input_2c(text = ci.TEXT.text_editor(text = f"1. {Lang["Training"][player["P"]["langue"]]}\n2. INLL\nS. {Lang["Setting"][player["P"]["langue"]]}", police = "NONE", text_color = "DEFAULT", background_color = "DEFAULT"), c1 = "q", c2 = "h").strip().lower()
-
-
+        print(ci.TEXT.text_editor(text = f"{Lang["Welcome"][language]}!\n{Lang["What would you like to do"][language]}?", police = "FAT", text_color = "DEFAULT", background_color = "DEFAULT"))
+        choice = ci.INPUT.input_2c(text = ci.TEXT.text_editor(text = f"1. {Lang["Training"][language]}\n2. INLL\nS. {Lang["Setting"][language]}", police = "NONE", text_color = "DEFAULT", background_color = "DEFAULT"), c1 = "q", c2 = "h").strip().lower()
+        
 
         # =======================================
         #         SETTINGS
@@ -141,45 +153,37 @@ while running:
                     print(f"({state}) {txt} ")
                     return boole
 
-                state = show("1", ("1" + Lang["Natural Sciences"][player['P']['langue']]))
+                state = show("1", ("1 " + Lang["Language"][language]))
                 if state == "ON":
-                    _ = show("1_1", ("1.1" + Lang["Name of the elements"][player['P']['langue']]))
-                    _ = show("1_2", ("1.2" + Lang["Atomic number"][player['P']['langue']]))
+                    _ = show("1_1", ("1.1 " + Lang["Vocabulary"][language]))
+                    _ = show("1_2", ("1.2 " + Lang["Conjugation"][language]))
+                    _ = show("EN", ("EN) " + Lang["English"][language]))
+                    _ = show("FR", ("FR) " + Lang["French"][language]))
+                    _ = show("DE", ("DE) " + Lang["German"][language]))
                     print("")
 
-                state = show("2", ("2 " + Lang["French"][player['P']['langue']]))
+                state = show("2", ("2 " + Lang["Natural Sciences"][language]))
                 if state == "ON":
-                    _ = show("2_1", ("\t2.1 " + Lang["Vocabulary"][player['P']['langue']]))
-                    _ = show("2_2", ("\t2.2 " + Lang["Conjugation"][player['P']['langue']]))
+                    _ = show("2_1", ("\t2.1 " + Lang["Name of the elements"][language]))
+                    _ = show("2_2", ("\t2.2 " + Lang["Atomic number"][language]))
                     print("")
 
-                state = show("3", ("3 " + Lang["German"][player['P']['langue']]))
+                state = show("3", ("3 " + Lang["Mathematics"][language]))
                 if state == "ON":
-                    _ = show("3_1", ("\t3.1" + Lang["Features of short stories (Easy)"][player['P']['langue']]))
-                    _ = show("3_2", ("\t3.2 " + Lang["Features of short stories (Hard)"][player['P']['langue']]))
+                    _ = show("3_1", ("\t3.1 " + Lang["The Basics (+ - x ÷)"][language]))
                     print("")
 
-                state = show("4", ("4 " + Lang["English"][player['P']['langue']]))
+                state = show("4", ("4 " + Lang["Geography"][language]))
                 if state == "ON":
-                    _ = show("4_1", ("\t4.1 " + Lang["Easy vocabulary"][player['P']['langue']]))
-                    _ = show("4_2", ("\t4.2 " + Lang["Impossible vocabulary"][player['P']['langue']]))
+                    _ = show("4_1", ("\t4.1 " + Lang["Plate tectonics theory"][language]))
                     print("")
 
-                state = show("5", ("5 " + Lang["Math"][player['P']['langue']]))
+                state = show("5", ("5 " + Lang["History"][language]))
                 if state == "ON":
-                    _ = show("5_1", ("\t5.1 " + Lang["The Basics (+ - x ÷)"][player['P']['langue']]))
+                    _ = show("5_1", ("\t5.1 " + Lang["Plate tectonics theory"][language]))
+                    _ = show("5_2", ("\t5.2 " + Lang["Industrialization"][language]))
                     print("")
 
-                state = show("6", ("6 " + Lang["Geography"][player['P']['langue']]))
-                if state == "ON":
-                    _ = show("6_1", ("\t6.1 " + Lang["Plate tectonics theory"][player['P']['langue']]))
-                    print("")
-
-                state = show("7", ("7 " + Lang["History"][player['P']['langue']]))
-                if state == "ON":
-                    _ = show("7_1", ("\t7.1 " + Lang["Plate tectonics theory"][player['P']['langue']]))
-                    _ = show("7_2", ("\t7.2 " + Lang["Industrialization"][player['P']['langue']]))
-                    print("")
                 print("=" * 40)
                 action = input("\nq: Quit\nENTER to validate, or choose a button.\n>\t").strip()
 
@@ -187,6 +191,9 @@ while running:
                     "1": "1",
                     "1.1": "1_1",
                     "1.2": "1_2",
+                    "EN": "EN",
+                    "FR": "FR",
+                    "DE": "DE",
 
                     "2": "2",
                     "2.1": "2_1",
@@ -194,21 +201,13 @@ while running:
 
                     "3": "3",
                     "3.1": "3_1",
-                    "3.2": "3_2",
 
                     "4": "4",
                     "4.1": "4_1",
-                    "4.2": "4_2",
 
                     "5": "5",
                     "5.1": "5_1",
-
-                    "6": "6",
-                    "6.1": "6_1",
-
-                    "7": "7",
-                    "7.1": "7_1",
-                    "7.2": "7_2"
+                    "5.2": "5_2",
                 }
                 
                 if action in mapping:
@@ -226,7 +225,7 @@ while running:
             # =======================================
             #         START GAMES
             # =======================================
-            menu, choices_scnat, choices_francais, choices_deutsch, choices_anglais, choices_math, choices_geo, choices_histo = buttons.collect()
+            menu, langue_p, choices_langue, choices_scnat, choices_math, choices_geo, choices_histo = buttons.collect()
             
             if not menu:
                 print("No games selected in settings.")
@@ -252,12 +251,9 @@ while running:
                     score = False
                     if selected_game == "ScNat":
                         exercise_score, xp, streak = ci.matiere(link.get_scnat(), choices_scnat, player, ndq, score)
-                    elif selected_game == "Francais":
-                        exercise_score, xp, streak = ci.matiere(link.get_francais(), choices_francais, player, ndq, score)
-                    elif selected_game == "Deutsch":
-                        exercise_score, xp, streak = ci.matiere(link.get_deutsch(), choices_deutsch, player, ndq, score)
-                    elif selected_game == "Anglais":
-                        exercise_score, xp, streak = ci.matiere(link.get_anglais(), choices_anglais, player, ndq, score)
+                    elif selected_game == "Language":
+                        langue_choisi = random.choice(langue_p)
+                        exercise_score, xp, streak = ci.matiere(link.get_langue(), langue_choisi, player, ndq, score)
                     elif selected_game == "Math":
                         exercise_score, xp, streak = ci.matiere(link.get_math(), choices_math, player, ndq, score)
                     elif selected_game == "Geo":
@@ -295,12 +291,9 @@ while running:
                     
                     if selected_game == "ScNat":
                         exercise_score, xp, streak = ci.matiere(link.get_scnat(), choices_scnat, player, i, score)
-                    elif selected_game == "Francais":
-                        exercise_score, xp, streak = ci.matiere(link.get_francais(), choices_francais, player, i, score)
-                    elif selected_game == "Deutsch":
-                        exercise_score, xp, streak = ci.matiere(link.get_deutsch(), choices_deutsch, player, i, score)
-                    elif selected_game == "Anglais":
-                        exercise_score, xp, streak = ci.matiere(link.get_anglais(), choices_anglais, player, i, score)
+                    elif selected_game == "Language":
+                        langue_choisi = random.choice(langue_p)
+                        exercise_score, xp, streak = ci.matiere(link.get_langue(), langue_choisi, player, ndq, score)
                     elif selected_game == "Math":
                         exercise_score, xp, streak = ci.matiere(link.get_math(), choices_math, player, i, score)
                     elif selected_game == "Geo":
@@ -321,8 +314,8 @@ while running:
                     if i < ndq - 1:
                         input("Press ENTER to continue...")
                     os.system('cls' if os.name == 'nt' else 'clear')
-                
-                percentage = calculate_percentage(score, ndq)
+
+                percentage = lib.calculate_percentage(score, ndq)
                 input(f"Your result:\nScore: {score}\nSuccess percentage: {percentage}%\nPress ENTER to continue...")
 
         # =======================================
@@ -388,11 +381,11 @@ while running:
                 
                 try:
                     if lang_selected == "1":
-                        player['P']['langue'] = "FR"
+                        language = "FR"
                     elif lang_selected == "2":
-                        player['P']['langue'] = "EN"
+                        language = "EN"
                     elif lang_selected == "3":
-                        player['P']['langue'] = "DE"
+                        language = "DE"
                     else:
                         print("Invalid choice.")
                 except Exception as e:
