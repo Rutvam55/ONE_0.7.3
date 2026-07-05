@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 
 	char chaine_20[21] = "Math basic (+ - * /)";
 	for (int i = 0; chaine_20[i] != '\0'; i++) {bouton.math_basic.name[i] = chaine_20[i];}
-	bouton.math_basic.state = 0;
+	bouton.math_basic.state = 1;
 
 	strcpy(chaine_12, "Profil.json"); 
 	for (int i = 0; chaine_12[i] != '\0'; i++) {file.profil_json.data[i] = chaine_12[i];}

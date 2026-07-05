@@ -132,6 +132,10 @@ void table_des_matiere(struct Matiere *bouton, struct Mode *mode)
 				bouton -> math.state = !(bouton -> math.state);
 				break;
 		}
+		if (!bouton -> english.state && !bouton -> francais.state && !bouton -> deutsch.state)
+		{
+			bouton -> english.state = 1;
+		}
 	}
 }
 
@@ -206,10 +210,12 @@ void quiz_normal(struct File *file, struct Matiere *bouton, struct Player *playe
     {
 		int value = -2;
 		if ((bouton -> langue.state && (bouton -> verb.state || bouton -> voc.state) && (bouton -> english.state || bouton -> francais.state || bouton -> deutsch.state)) || (bouton -> math.state && bouton -> math_basic.state)) {
-			int temp_int = rand()%2;
+			int temp_int = rand()%3;
 			if (!temp_int && bouton -> langue.state && bouton -> verb.state) {
 				value = question_english(file -> DATA_enVerb.value);
-			} else if (temp_int && bouton -> math.state && bouton -> math_basic.state) {
+			} else if (temp_int && bouton -> langue.state && bouton -> voc.state) {
+				value = question_voc(file -> DATA_Voc.value, bouton);
+			} else if (temp_int==2 && bouton -> math.state && bouton -> math_basic.state) {
 				int a;
 				int b;
 				char op;
@@ -259,10 +265,12 @@ void quiz_infini(struct File *file, struct Matiere *bouton, struct Player *playe
     while(continu)
     {
 		if ((bouton -> langue.state && (bouton -> verb.state || bouton -> voc.state) && (bouton -> english.state || bouton -> francais.state || bouton -> deutsch.state)) || (bouton -> math.state && bouton -> math_basic.state)) {
-			int temp_int = rand()%2;
+			int temp_int = rand()%3;
 			if (!temp_int && bouton -> english.state && bouton -> verb.state) {
 				value = question_english(file -> DATA_enVerb.value);
-			} else if (temp_int && bouton -> math.state && bouton -> math_basic.state) {
+			} else if (temp_int && bouton -> langue.state && bouton -> voc.state) {
+				value = question_voc(file -> DATA_Voc.value, bouton);
+			} else if (temp_int==2 && bouton -> math.state && bouton -> math_basic.state) {
 				int a;
 				int b;
 				char op;
