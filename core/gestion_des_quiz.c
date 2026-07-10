@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include "./gestion_des_quiz.h"
 #include "./funktion.h"
-#include "../matiere/langue/english.h"
-#include "../matiere/math/math.h"
+#include "../matiere/english.h"
+#include "../matiere/math.h"
 
 void table_des_matiere(struct Matiere *bouton, struct Mode *mode)
 {
